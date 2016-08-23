@@ -54,19 +54,10 @@ public class Player {
     }
 
     public void leftWallBlock(){
-        x = 75;
-//        if(paddleMoving == LEFT){
-//            x = x + paddleSpeed / fps;
-//            rect.left = x;
-//            rect.right = x + length;
-//        }
+        x = 200;
     }
 
-    public void rightWallBlock(long fps){
-        if(paddleMoving == RIGHT){
-            x = x - paddleSpeed / fps;
-            rect.left = x;
-            rect.right = x + length;
+    public void rightWallBlock(){
+        x = x - 200;
         }
     }
-}

@@ -44,6 +44,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Asteroid asteroid;
     private Asteroid asteroidBig;
     private Wall leftWall;
+    private Wall rightWall;
     private Paint paintOutline;
 
     public SpaceGameView(Context context, int x, int y) {
@@ -67,7 +68,8 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private void prepareLevel(){
         player = new Player (screenX, screenY);
-        leftWall = new Wall(screenX, 5,  0,  0);
+        leftWall = new Wall(screenY, 5,  0,  0);
+        rightWall = new Wall(screenY, 5,  screenX,  0);
         createToken();
         createAsteroid();
 
@@ -159,6 +161,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         }
 
+        if (RectF.intersects(rightWall.getRect(), player.getRect())) {
+            player.rightWallBlock();
+            Log.d("CONSOLE LOG", "HIT THE LEFT WALL!!!");
+
+        }
+
 //      if (lives <= 0){
 //
 //            pause();
@@ -193,6 +201,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 //            canvas.drawRect(asteroidBig.getRect(), paintOutline);
 
             canvas.drawRect(leftWall.getRect(), paint);
+            canvas.drawRect(rightWall.getRect(), paint);
             paint.setColor(Color.argb(255,  249, 129, 0));
             paint.setTextSize(40);
             canvas.drawText("Score: " + score + "   Lives: " + lives, 10,50, paint);
@@ -228,7 +237,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 } else
 
                 {
-                    player.setMovementState(player.LEFT);
+                        player.setMovementState(player.LEFT);
                 }
 
                 break;
