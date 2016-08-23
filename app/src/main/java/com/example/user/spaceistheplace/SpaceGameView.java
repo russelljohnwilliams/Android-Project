@@ -45,6 +45,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Asteroid asteroidBig;
     private Wall leftWall;
     private Wall rightWall;
+    private Wall floor;
     private Paint paintOutline;
 
     public SpaceGameView(Context context, int x, int y) {
@@ -70,6 +71,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         player = new Player (screenX, screenY);
         leftWall = new Wall(screenY, 5,  0,  0);
         rightWall = new Wall(screenY, 5,  screenX,  0);
+        floor = new Wall(5, screenX, 0, screenY + 800);
         createToken();
         createAsteroid();
 
@@ -85,7 +87,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void createToken(){
         Random r = new Random();
         int z = r.nextInt(screenX - 50) + 50;
-        token = new Token (50, 50, z, 100, 500, 5);
+        token = new Token (50, 50, z, 100, 500, 1);
         token.setMovementState(token.DOWN);
     }
 
@@ -149,7 +151,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 //            canvas = ourHolder.lockCanvas();
 //            canvas.drawColor(Color.RED);
 //            ourHolder.unlockCanvasAndPost(canvas);
-            createAsteroid();
+//            createAsteroid();
             lives -= 1;
             Log.d("CONSOLE LOG", "YOU LOST A LIFE!!!");
 
@@ -163,10 +165,21 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         if (RectF.intersects(rightWall.getRect(), player.getRect())) {
             player.rightWallBlock();
-            Log.d("CONSOLE LOG", "HIT THE LEFT WALL!!!");
+            Log.d("CONSOLE LOG", "HIT THE RIGHT WALL!!!");
 
         }
 
+        if (RectF.intersects(floor.getRect(), token.getRect())) {
+            createToken();
+            Log.d("CONSOLE LOG", "TOKEN HIT THE FLOOR!!!");
+
+        }
+
+        if (RectF.intersects(floor.getRect(), asteroid.getRect())) {
+            createAsteroid();
+            Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
+
+        }
 //      if (lives <= 0){
 //
 //            pause();
@@ -202,6 +215,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             canvas.drawRect(leftWall.getRect(), paint);
             canvas.drawRect(rightWall.getRect(), paint);
+            canvas.drawRect(floor.getRect(), paint);
             paint.setColor(Color.argb(255,  249, 129, 0));
             paint.setTextSize(40);
             canvas.drawText("Score: " + score + "   Lives: " + lives, 10,50, paint);
@@ -228,7 +242,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-            // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
                 paused = false;
                 if (motionEvent.getX() > screenX / 2) {
