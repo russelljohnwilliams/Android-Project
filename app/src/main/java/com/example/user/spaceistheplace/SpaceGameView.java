@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -33,14 +34,19 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private int screenY;
 
     private Player player;
+    private Token token;
 
     private int score = 0;
 
     private int lives = 3;
 
+    Paint paintOutline;
+
     public SpaceGameView(Context context, int x, int y) {
 
         super(context);
+
+        paintOutline = new Paint();
 
         this.context = context;
 
@@ -50,14 +56,17 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         screenX = x;
         screenY = y;
 
-
         prepareLevel();
     }
 
     private void prepareLevel(){
-
         player = new Player (screenX, screenY);
+        createToken();
+    }
 
+    private void createToken(){
+        token = new Token (50, 50, 1000, 100, 500, 5);
+        token.setMovementState(token.DOWN);
     }
 
     @Override
@@ -84,7 +93,16 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
         player.update(fps);
+        token.update(fps);
 
+        if (RectF.intersects(token.getRect(), player.getRect())) {
+            canvas = ourHolder.lockCanvas();
+            canvas.drawColor(Color.WHITE);
+            ourHolder.unlockCanvasAndPost(canvas);
+            token = null;
+            createToken();
+            Log.d("CONSOLE LOG", "POINTS SCORED FOR CATCHING THE BALL!!!");
+        }
     }
 
     private void draw(){
@@ -94,9 +112,16 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             canvas.drawColor(Color.argb(255, 26, 128, 182));
 
-            paint.setColor(Color.argb(255,  255, 255, 255));
+            paint.setColor(Color.argb(255, 255, 255, 255));
 
             canvas.drawRect(player.getRect(), paint);
+
+            paintOutline.setStrokeWidth(2);
+            paintOutline.setColor(Color.WHITE);
+            paintOutline.setStyle(Paint.Style.STROKE);
+
+
+            canvas.drawRect(token.getRect(), paintOutline);
 
             paint.setColor(Color.argb(255,  249, 129, 0));
             paint.setTextSize(40);
