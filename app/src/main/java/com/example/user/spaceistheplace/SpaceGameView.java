@@ -84,7 +84,7 @@ private void prepareLevel(){
         createToken();
         createAsteroid();
 
-//        createAsteroidBig();
+        createAsteroidBig();
     }
 
 //    private int randomNumber(){
@@ -108,13 +108,13 @@ private void prepareLevel(){
         asteroid.setMovementState(token.DOWN);
     }
 
-//    private void createAsteroidBig(){
-//            Random r = new Random();
-//            int z = r.nextInt(screenX - 50) + 50;
-//            int y = screenY - 3500;
-//            asteroidBig = new Asteroid(900, 900, z, y, 100);
-//            asteroidBig.setMovementState(token.DOWN);//
-//        }
+    private void createAsteroidBig(){
+            Random r = new Random();
+            int z = r.nextInt(screenX - 50) + 50;
+            int y = screenY - 3500;
+            asteroidBig = new Asteroid(900, 900, z, y, 100);
+            asteroidBig.setMovementState(token.DOWN);//
+        }
 
 
 
@@ -145,7 +145,9 @@ private void prepareLevel(){
         token.update(fps);
         asteroid.update(fps);
         bitmapYPosition +=5;
-//        asteroidBig.update(fps);
+        if (score > 5) {
+            asteroidBig.update(fps);
+        }
 
              if (RectF.intersects(token.getRect(), player.getRect())) {
             canvas = ourHolder.lockCanvas();
@@ -226,12 +228,11 @@ private void prepareLevel(){
 
             canvas.drawRect(token.getRect(), paintOutline);
             canvas.drawRect(asteroid.getRect(), paintOutline);
-//            canvas.drawRect(asteroidBig.getRect(), paintOutline);
+            canvas.drawRect(asteroidBig.getRect(), paintOutline);
 
             canvas.drawRect(leftWall.getRect(), hidden);
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
-//            canvas.drawBitmap(playerShip.getBitmap(), playerShip.getX(), screenY - 50, paint);
             paint.setTextSize(50);
             canvas.drawText("Score: " + score, 100, 100, paint);
             canvas.drawText("Lives: " + lives, screenX - 300, 100, paint);
