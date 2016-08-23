@@ -73,13 +73,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         player = new Player (screenX, screenY);
         leftWall = new Wall(screenY, 5,  0,  0);
         rightWall = new Wall(screenY, 5,  screenX, 0);
-        floor = new Wall(5, screenX, 0, screenY + screenY);
+        floor = new Wall(100, screenX, 0, screenY + screenY);
         createToken();
         createAsteroid();
         createAsteroidBig();
         createTheStars();
         createStar();
     }
+
+
 
     private void createTheStars() {
         numStars = 0;
@@ -103,15 +105,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private void createStar() {
 
-            Random r = new Random();
-            int x = r.nextInt(screenX - 1) + 1;
-
-            Random ra = new Random();
-            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
-
-            Random ran = new Random();
-            int s = ran.nextInt(600 - 300) + 300;
-
+//            Random r = new Random();
+//            int x = r.nextInt(screenX - 1) + 1;
+            int x = randomNumber(screenX, 1);
+//            Random ra = new Random();
+//            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
+            int y = randomNumber(screenY, screenY * -1);
+//            Random ran = new Random();
+//            int s = ran.nextInt(600 - 300) + 300;
+            int s = randomNumber(600, 300);
 
             star = new Token(50, 50, x, y, s, 0 );
 
@@ -121,15 +123,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
 
-//    private int randomNumber(){
-//        Random r = new Random();
-//        int z = r.nextInt(screenX - 50) + 50;
-//        return z;
-//    }
+    private int randomNumber(int a, int b){
+        Random r = new Random();
+        return r.nextInt(a - b) + b;
+    }
 
     private void createToken(){
-        Random r = new Random();
-        int z = r.nextInt(screenX - 100) + 100;
+//        Random r = new Random();
+//        int z = r.nextInt(screenX - 100) + 100;
+        int z = randomNumber(screenX, 100);
         token = new Token (50, 50, z, 100, 500, 1);
         token.setMovementState(token.DOWN);
     }
