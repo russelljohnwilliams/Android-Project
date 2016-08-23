@@ -40,15 +40,13 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private int lives = 3;
     private Player player;
     protected Token token;
-    private int bitmapYPosition = 0;
     private Asteroid asteroid;
     private Asteroid asteroidBig;
     private Wall leftWall;
     private Wall rightWall;
     private Wall floor;
-//    private Bitmap spacerace;
 
-
+    private Token star;
     private Token[] stars;
     int numStars = 0;
 
@@ -59,38 +57,19 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         this.context = context;
 
         ourHolder = getHolder();
-        stars = new Token[30];
+
+
         paint = new Paint();
         paintOutline = new Paint();
         hidden = new Paint();
-//        spacerace = BitmapFactory.decodeResource(this.getResources(), R.drawable.spacerace);
 
         screenX = x;
         screenY = y;
-//        createTheStars();
         prepareLevel();
     }
 
-    private void createTheStars() {
-        numStars = 0;
-        for (int i = 0; i < 30; i++) {
-        Random r = new Random();
-        int x = r.nextInt(screenX - 1) + 1;
-
-        Random ra = new Random();
-        int y = ra.nextInt(screenX - 1) + 1;
-
-        Random ran = new Random();
-        int s = ran.nextInt(screenX - 1) + 1;
-
-
-            stars[i] = new Token(5, 5, x, y, s, 0 );
-            numStars ++;
-            stars[i].setMovementState(stars[i].DOWN);
-            Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
-        }
-    }
-private void prepareLevel(){
+    private void prepareLevel(){
+        stars = new Token[70];
         player = new Player (screenX, screenY);
         leftWall = new Wall(screenY, 5,  0,  0);
         rightWall = new Wall(screenY, 5,  screenX, 0);
@@ -99,8 +78,48 @@ private void prepareLevel(){
         createAsteroid();
         createAsteroidBig();
         createTheStars();
-
+        createStar();
     }
+
+    private void createTheStars() {
+        numStars = 0;
+        for (int i = 0; i < 70; i++) {
+            Random r = new Random();
+            int x = r.nextInt(screenX - 1) + 1;
+
+            Random ra = new Random();
+            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
+
+            Random ran = new Random();
+            int s = ran.nextInt(600 - 300) + 300;
+
+
+            stars[i] = new Token(5, 5, x, y, s, 0 );
+            numStars ++;
+            stars[i].setMovementState(stars[i].DOWN);
+            Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
+        }
+    }
+
+    private void createStar() {
+
+            Random r = new Random();
+            int x = r.nextInt(screenX - 1) + 1;
+
+            Random ra = new Random();
+            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
+
+            Random ran = new Random();
+            int s = ran.nextInt(600 - 300) + 300;
+
+
+            star = new Token(50, 50, x, y, s, 0 );
+
+            star.setMovementState(star.DOWN);
+            Log.d("CONSOLE LOG :", "BIRTH OF A NEW STAR");
+        }
+
+
 
 //    private int randomNumber(){
 //        Random r = new Random();
@@ -153,7 +172,7 @@ private void prepareLevel(){
 
     private void update() {
 
-
+        star.update(fps);
         player.update(fps);
         token.update(fps);
         asteroid.update(fps);
@@ -208,6 +227,24 @@ private void prepareLevel(){
             createAsteroidBig();
             Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
         }
+
+        for(int i = 0; i < 70; i++) {
+            if (RectF.intersects(stars[i].getRect(), floor.getRect())) {
+                Random r = new Random();
+                int x = r.nextInt(screenX - 1) + 1;
+
+                Random ra = new Random();
+                int y = ra.nextInt(screenY - 1 ) + 1 ;
+
+                Random ran = new Random();
+                int s = ran.nextInt(600 - 300) + 300;
+                stars[i] = new Token(5, 5, x, y, s, 0 );
+                stars[i].setMovementState(stars[i].DOWN);
+                Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
+            }
+        }
+
+
             if (lives <= 0) {
                 player.moveShip(2500);
                 Log.d("CONSOLE LOG", "GAME OVER!!!");
@@ -227,28 +264,27 @@ private void prepareLevel(){
         if (ourHolder.getSurface().isValid()) {
             canvas = ourHolder.lockCanvas();
 
-            canvas.drawColor(Color.BLACK);
-//            canvas.drawBitmap(spacerace, 0, bitmapYPosition, paint);
-
-            paint.setColor(Color.WHITE);
             hidden.setColor(Color.argb(0, 0, 0, 0));
-            canvas.drawRect(player.getRect(), paint);
 
             paintOutline.setStrokeWidth(2);
             paintOutline.setColor(Color.WHITE);
             paintOutline.setStyle(Paint.Style.STROKE);
 
+            paint.setColor(Color.WHITE);
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setTextSize(50);
+
+            canvas.drawColor(Color.BLACK);
+            canvas.drawRect(player.getRect(), paint);
             canvas.drawRect(token.getRect(), paintOutline);
             canvas.drawRect(asteroid.getRect(), paintOutline);
             canvas.drawRect(asteroidBig.getRect(), paintOutline);
-
             canvas.drawRect(leftWall.getRect(), hidden);
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
-            paint.setTextAlign(Paint.Align.CENTER);
-            paint.setTextSize(50);
             canvas.drawText("Score: " + score, 150, 100, paint);
             canvas.drawText("Lives: " + lives, screenX - 200, 100, paint);
+            canvas.drawRect(star.getRect(), paintOutline);
 
             for (int i = 0; i < numStars; i++) {
                     canvas.drawRect(stars[i].getRect(), paint);
