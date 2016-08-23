@@ -45,8 +45,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Wall leftWall;
     private Wall rightWall;
     private Wall floor;
-
-    private Token star;
     private Token[] stars;
     int numStars = 0;
 
@@ -78,7 +76,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         createAsteroid();
         createAsteroidBig();
         createTheStars();
-        createStar();
     }
 
 
@@ -86,15 +83,16 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void createTheStars() {
         numStars = 0;
         for (int i = 0; i < 70; i++) {
-            Random r = new Random();
-            int x = r.nextInt(screenX - 1) + 1;
+//            Random r = new Random();
+//            int x = r.nextInt(screenX - 1) + 1;
+//            Random ra = new Random();
+//            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
+//            Random ran = new Random();
+//            int s = ran.nextInt(600 - 300) + 300;
 
-            Random ra = new Random();
-            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
-
-            Random ran = new Random();
-            int s = ran.nextInt(600 - 300) + 300;
-
+            int x = randomNumber(screenX, 1);
+            int y = randomNumber(screenY, screenY * -1);
+            int s = randomNumber(600, 300);
 
             stars[i] = new Token(5, 5, x, y, s, 0 );
             numStars ++;
@@ -103,23 +101,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         }
     }
 
-    private void createStar() {
-
-//            Random r = new Random();
-//            int x = r.nextInt(screenX - 1) + 1;
-            int x = randomNumber(screenX, 1);
-//            Random ra = new Random();
-//            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
-            int y = randomNumber(screenY, screenY * -1);
-//            Random ran = new Random();
-//            int s = ran.nextInt(600 - 300) + 300;
-            int s = randomNumber(600, 300);
-
-            star = new Token(50, 50, x, y, s, 0 );
-
-            star.setMovementState(star.DOWN);
-            Log.d("CONSOLE LOG :", "BIRTH OF A NEW STAR");
-        }
 
 
 
@@ -137,16 +118,20 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     }
 
     private void createAsteroid(){
-        Random r = new Random();
-        int z = r.nextInt(screenX - 100 * -2) + 100 * -2;
-        int y = screenY - 2500;
+//        Random r = new Random();
+//        int z = r.nextInt(screenX - 100 * -2) + 100 * -2;
+
+        int z = randomNumber(screenX, 100 * -2);
+        int y = screenY - screenY * 2;
         asteroid = new Asteroid(500, 500, z, y, 400);
         asteroid.setMovementState(token.DOWN);
     }
 
     private void createAsteroidBig(){
-            Random r = new Random();
-            int z = r.nextInt(screenX-800 - 1) + 1;
+//            Random r = new Random();
+//            int z = r.nextInt(screenX-800 - 1) + 1;
+
+            int z = randomNumber(screenX-800, 1);
             int y = screenY - 2200;
             asteroidBig = new Asteroid(900, 900, z, y, 250);
             asteroidBig.setMovementState(token.DOWN);
@@ -174,15 +159,18 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private void update() {
 
-        star.update(fps);
         player.update(fps);
         token.update(fps);
-        asteroid.update(fps);
+
         //bitmapYPosition +=5;
         for(int i = 0; i < numStars; i++){
             stars[i].update(fps);
         }
         if (score > 5) {
+            asteroid.update(fps);
+        }
+
+        if (score > 15) {
             asteroidBig.update(fps);
         }
 
@@ -227,19 +215,23 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         if (RectF.intersects(floor.getRect(), asteroidBig.getRect())) {
             createAsteroidBig();
-            Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
+            Log.d("CONSOLE LOG", "BIG ASTEROID HIT THE FLOOR!!!");
         }
 
         for(int i = 0; i < 70; i++) {
             if (RectF.intersects(stars[i].getRect(), floor.getRect())) {
-                Random r = new Random();
-                int x = r.nextInt(screenX - 1) + 1;
+//                Random r = new Random();
+//                int x = r.nextInt(screenX - 1) + 1;
+//                Random ra = new Random();
+//                int y = ra.nextInt(screenY - 1 ) + 1 ;
 
-                Random ra = new Random();
-                int y = ra.nextInt(screenY - 1 ) + 1 ;
+//                Random ran = new Random();
+//                int s = ran.nextInt(600 - 300) + 300;
 
-                Random ran = new Random();
-                int s = ran.nextInt(600 - 300) + 300;
+                int x = randomNumber(screenX, 1);
+                int y = randomNumber(screenY, 1);
+                int s = randomNumber(600, 300);
+
                 stars[i] = new Token(5, 5, x, y, s, 0 );
                 stars[i].setMovementState(stars[i].DOWN);
                 Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
@@ -286,7 +278,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas.drawRect(floor.getRect(), hidden);
             canvas.drawText("Score: " + score, 150, 100, paint);
             canvas.drawText("Lives: " + lives, screenX - 200, 100, paint);
-            canvas.drawRect(star.getRect(), paintOutline);
 
             for (int i = 0; i < numStars; i++) {
                     canvas.drawRect(stars[i].getRect(), paint);

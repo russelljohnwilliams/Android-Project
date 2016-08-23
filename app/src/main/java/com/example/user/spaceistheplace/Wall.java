@@ -1,6 +1,5 @@
 package com.example.user.spaceistheplace;
 
-import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
 
