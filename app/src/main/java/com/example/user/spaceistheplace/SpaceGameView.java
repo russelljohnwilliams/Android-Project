@@ -1,10 +1,14 @@
 package com.example.user.spaceistheplace;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -38,15 +42,16 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private int score = 0;
     private int lives = 3;
-
     private Player player;
     private Token token;
-
+    private int bitmapYPosition = 0;
     private Asteroid asteroid;
     private Asteroid asteroidBig;
     private Wall leftWall;
     private Wall rightWall;
     private Wall floor;
+    private Bitmap spacerace;
+
 
     public SpaceGameView(Context context, int x, int y) {
 
@@ -59,20 +64,23 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         paint = new Paint();
         paintOutline = new Paint();
         hidden = new Paint();
+        spacerace = BitmapFactory.decodeResource(this.getResources(), R.drawable.spacerace);
 
         screenX = x;
         screenY = y;
 
-
         prepareLevel();
-
     }
 
-    private void prepareLevel(){
+
+
+
+
+private void prepareLevel(){
         player = new Player (screenX, screenY);
         leftWall = new Wall(screenY, 5,  0,  0);
-        rightWall = new Wall(screenY, 5,  screenX,  0);
-        floor = new Wall(5, screenX, 0, screenY + 800);
+        rightWall = new Wall(screenY, 5,  screenX, 0);
+        floor = new Wall(5, screenX, 0, screenY + screenY);
         createToken();
         createAsteroid();
 
@@ -136,6 +144,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         player.update(fps);
         token.update(fps);
         asteroid.update(fps);
+        bitmapYPosition +=5;
 //        asteroidBig.update(fps);
 
              if (RectF.intersects(token.getRect(), player.getRect())) {
@@ -151,7 +160,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas = ourHolder.lockCanvas();
             paint.setTextSize(800);
             paint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText("HIT", screenX / 2, 1000, paint);
+            canvas.drawText("HIT", screenX / 2, 800, paint);
             ourHolder.unlockCanvasAndPost(canvas);
             prepareLevel();
             lives -= 1;
@@ -186,11 +195,13 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
             canvas = ourHolder.lockCanvas();
-            paint.setTextSize(500);
+            paint.setTextSize(200);
             canvas.drawText("GAME OVER", screenX / 2, 500, paint);
+            paint.setTextSize(90);
             canvas.drawText(" your final Score was: " + score, screenX / 2, 800, paint);
             ourHolder.unlockCanvasAndPost(canvas);
-          pause();
+            player = null;
+//          pause();
         }
 
 //
@@ -202,6 +213,8 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas = ourHolder.lockCanvas();
 
             canvas.drawColor(Color.BLACK);
+            canvas.drawBitmap(spacerace, 0, bitmapYPosition, paint);
+
             paint.setColor(Color.WHITE);
             hidden.setColor(Color.argb(0, 0, 0, 0));
             canvas.drawRect(player.getRect(), paint);
@@ -218,6 +231,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas.drawRect(leftWall.getRect(), hidden);
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
+//            canvas.drawBitmap(playerShip.getBitmap(), playerShip.getX(), screenY - 50, paint);
             paint.setTextSize(50);
             canvas.drawText("Score: " + score, 100, 100, paint);
             canvas.drawText("Lives: " + lives, screenX - 300, 100, paint);

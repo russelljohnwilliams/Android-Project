@@ -1,5 +1,6 @@
 package com.example.user.spaceistheplace;
 
+import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
 
@@ -23,6 +24,7 @@ public class Wall {
         this.y = y;
 
         rect = new RectF(x, y, x + width, y + length);
+
     }
 
     public RectF getRect(){
