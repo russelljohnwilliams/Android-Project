@@ -36,6 +36,8 @@ public class Asteroid {
         return rect;
     }
 
+
+
     public void setMovementState(int state) {
         asteroidMoving = state;
     }

@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.Random;
+
 
 public class SpaceGameView extends SurfaceView implements Runnable{
 
@@ -33,14 +35,16 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private int screenX;
     private int screenY;
 
+    private int score = 0;
+    private int lives = 3;
+
     private Player player;
     private Token token;
 
-    private int score = 0;
-
-    private int lives = 3;
-
-    Paint paintOutline;
+    private Asteroid asteroid;
+    private Asteroid asteroidBig;
+    private Wall leftWall;
+    private Paint paintOutline;
 
     public SpaceGameView(Context context, int x, int y) {
 
@@ -56,18 +60,57 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         screenX = x;
         screenY = y;
 
+
         prepareLevel();
+
     }
 
     private void prepareLevel(){
         player = new Player (screenX, screenY);
+        leftWall = new Wall();
         createToken();
+        createAsteroid();
+
+//        createAsteroidBig();
     }
 
+//    private int randomNumber(){
+//        Random r = new Random();
+//        int z = r.nextInt(screenX - 50) + 50;
+//        return z;
+//    }
+
     private void createToken(){
-        token = new Token (50, 50, 1000, 100, 500, 5);
+        Random r = new Random();
+        int z = r.nextInt(screenX - 50) + 50;
+        token = new Token (50, 50, z, 100, 500, 5);
         token.setMovementState(token.DOWN);
     }
+
+    private void createAsteroid(){
+        Random r = new Random();
+        int z = r.nextInt(screenX - 50) + 50;
+        int y = screenY - 2500;
+        asteroid = new Asteroid(500, 500, z, y, 400);
+        asteroid.setMovementState(token.DOWN);
+    }
+
+//    private void createAsteroidBig(){
+//
+//            Random r = new Random();
+//            int z = r.nextInt(screenX - 50) + 50;
+//            int y = screenY - 3500;
+//            asteroidBig = new Asteroid(900, 900, z, y, 100);
+//            asteroidBig.setMovementState(token.DOWN);
+//
+//            canvas = ourHolder.lockCanvas();
+//
+//            ourHolder.unlockCanvasAndPost(canvas);
+//
+//
+//        }
+
+
 
     @Override
     public void run() {
@@ -94,15 +137,39 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         player.update(fps);
         token.update(fps);
+        asteroid.update(fps);
+//        asteroidBig.update(fps);
 
-        if (RectF.intersects(token.getRect(), player.getRect())) {
-            canvas = ourHolder.lockCanvas();
-            canvas.drawColor(Color.WHITE);
-            ourHolder.unlockCanvasAndPost(canvas);
-            token = null;
+             if (RectF.intersects(token.getRect(), player.getRect())) {
+//            canvas = ourHolder.lockCanvas();
+//            canvas.drawColor(Color.WHITE);
+//            ourHolder.unlockCanvasAndPost(canvas);
+//            token = null;
             createToken();
+            score += token.getValue();
             Log.d("CONSOLE LOG", "POINTS SCORED FOR CATCHING THE BALL!!!");
         }
+
+        if (RectF.intersects(asteroid.getRect(), player.getRect())) {
+//            canvas = ourHolder.lockCanvas();
+//            canvas.drawColor(Color.RED);
+//            ourHolder.unlockCanvasAndPost(canvas);
+            createAsteroid();
+            lives -= 1;
+            Log.d("CONSOLE LOG", "YOU LOST A LIFE!!!");
+
+        }
+//        if (lives <= 0){
+//
+//            pause();
+//            canvas = ourHolder.lockCanvas();
+//            canvas.drawText("GAME OVER", 70, 150, paint);
+//            canvas.drawText("Score: " + score, 50, 100, paint);
+//            ourHolder.unlockCanvasAndPost(canvas);
+//
+//        }
+
+//
     }
 
     private void draw(){
@@ -122,6 +189,8 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
             canvas.drawRect(token.getRect(), paintOutline);
+            canvas.drawRect(asteroid.getRect(), paintOutline);
+//            canvas.drawRect(asteroidBig.getRect(), paintOutline);
 
             paint.setColor(Color.argb(255,  249, 129, 0));
             paint.setTextSize(40);

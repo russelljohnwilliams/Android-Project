@@ -42,6 +42,10 @@ public class Token {
         return rect;
     }
 
+    public int getValue(){
+        return value;
+    }
+
     public void setMovementState(int state) {
         tokenMoving = state;
     }
@@ -62,9 +66,6 @@ public class Token {
 
 }
 
-//        Random r = new Random();
-//        int i1 = r.nextInt(screenX - 50) + 50;
-//        x = screenX - i1;
 
 
 
