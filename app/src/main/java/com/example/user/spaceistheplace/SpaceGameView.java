@@ -48,8 +48,9 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Wall floor;
 //    private Bitmap spacerace;
 
-    Token[] stars;
-    int numStars;
+
+    private Token[] stars;
+    int numStars = 0;
 
     public SpaceGameView(Context context, int x, int y) {
 
@@ -71,20 +72,22 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     }
 
     private void createTheStars() {
-
+        numStars = 0;
+        for (int i = 0; i < 30; i++) {
         Random r = new Random();
-        int z = r.nextInt(screenX - 1) + 1;
+        int x = r.nextInt(screenX - 1) + 1;
 
         Random ra = new Random();
-        int y = ra.nextInt(0 - 100 * -2) + 100 * -2;
+        int y = ra.nextInt(screenX - 1) + 1;
 
         Random ran = new Random();
-        int s = ran.nextInt(500 - 700) + 700;
+        int s = ran.nextInt(screenX - 1) + 1;
 
-        int numStars = 0;
-        for (int i = 0; i < 20; i++) {
-            stars[numStars] = new Token(2, 2, z, y, s, 0 );
+
+            stars[i] = new Token(5, 5, x, y, s, 0 );
             numStars ++;
+            stars[i].setMovementState(stars[i].DOWN);
+            Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
         }
     }
 private void prepareLevel(){
@@ -95,7 +98,7 @@ private void prepareLevel(){
         createToken();
         createAsteroid();
         createAsteroidBig();
-//        createTheStars();
+        createTheStars();
 
     }
 
