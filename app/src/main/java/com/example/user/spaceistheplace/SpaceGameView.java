@@ -1,14 +1,10 @@
 package com.example.user.spaceistheplace;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -50,7 +46,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Wall leftWall;
     private Wall rightWall;
     private Wall floor;
-    private Bitmap spacerace;
+//    private Bitmap spacerace;
 
 
     public SpaceGameView(Context context, int x, int y) {
@@ -64,17 +60,13 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         paint = new Paint();
         paintOutline = new Paint();
         hidden = new Paint();
-        spacerace = BitmapFactory.decodeResource(this.getResources(), R.drawable.spacerace);
+//        spacerace = BitmapFactory.decodeResource(this.getResources(), R.drawable.spacerace);
 
         screenX = x;
         screenY = y;
 
         prepareLevel();
     }
-
-
-
-
 
 private void prepareLevel(){
         player = new Player (screenX, screenY);
@@ -83,8 +75,8 @@ private void prepareLevel(){
         floor = new Wall(5, screenX, 0, screenY + screenY);
         createToken();
         createAsteroid();
-
         createAsteroidBig();
+
     }
 
 //    private int randomNumber(){
@@ -110,12 +102,11 @@ private void prepareLevel(){
 
     private void createAsteroidBig(){
             Random r = new Random();
-            int z = r.nextInt(screenX - 50) + 50;
-            int y = screenY - 3500;
-            asteroidBig = new Asteroid(900, 900, z, y, 100);
-            asteroidBig.setMovementState(token.DOWN);//
+            int z = r.nextInt(screenX - 100) + 100;
+            int y = screenY - 1000;
+            asteroidBig = new Asteroid(900, 900, z, y, 250);
+            asteroidBig.setMovementState(token.DOWN);
         }
-
 
 
     @Override
@@ -134,7 +125,6 @@ private void prepareLevel(){
             if (timeThisFrame >= 1) {
                 fps = 1000 / timeThisFrame;
             }
-
         }
     }
 
@@ -144,12 +134,12 @@ private void prepareLevel(){
         player.update(fps);
         token.update(fps);
         asteroid.update(fps);
-        bitmapYPosition +=5;
+//        bitmapYPosition +=5;
         if (score > 5) {
             asteroidBig.update(fps);
         }
 
-             if (RectF.intersects(token.getRect(), player.getRect())) {
+         if (RectF.intersects(token.getRect(), player.getRect())) {
             canvas = ourHolder.lockCanvas();
             canvas.drawColor(Color.WHITE);
             ourHolder.unlockCanvasAndPost(canvas);
@@ -159,25 +149,23 @@ private void prepareLevel(){
         }
 
         if (RectF.intersects(asteroid.getRect(), player.getRect())) {
-            canvas = ourHolder.lockCanvas();
-            paint.setTextSize(800);
-            paint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText("HIT", screenX / 2, 800, paint);
-            ourHolder.unlockCanvasAndPost(canvas);
-            prepareLevel();
-            lives -= 1;
+            hitByAsteroid();
             Log.d("CONSOLE LOG", "YOU LOST A LIFE!!!");
+        }
 
+        if (RectF.intersects(player.getRect(), asteroidBig.getRect())) {
+            hitByAsteroid();
+            Log.d("CONSOLE LOG", "HIT BY STEROID!!!");
         }
 
         if (RectF.intersects(leftWall.getRect(), player.getRect())) {
-            player.leftWallBlock();
+            player.moveShip(100);
             Log.d("CONSOLE LOG", "HIT THE LEFT WALL!!!");
 
         }
 
         if (RectF.intersects(rightWall.getRect(), player.getRect())) {
-            player.rightWallBlock();
+            player.moveShip(screenX - 200);
             Log.d("CONSOLE LOG", "HIT THE RIGHT WALL!!!");
 
         }
@@ -193,20 +181,25 @@ private void prepareLevel(){
             Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
 
         }
-      if (lives <= 0){
 
 
-            canvas = ourHolder.lockCanvas();
-            paint.setTextSize(200);
-            canvas.drawText("GAME OVER", screenX / 2, 500, paint);
-            paint.setTextSize(90);
-            canvas.drawText(" your final Score was: " + score, screenX / 2, 800, paint);
-            ourHolder.unlockCanvasAndPost(canvas);
-            player = null;
-//          pause();
+
+        if (RectF.intersects(floor.getRect(), asteroidBig.getRect())) {
+            createAsteroidBig();
+            Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
+        }
+            if (lives <= 0) {
+                player.moveShip(2500);
+                Log.d("CONSOLE LOG", "GAME OVER!!!");
+            }
         }
 
-//
+    private void hitByAsteroid(){
+        canvas = ourHolder.lockCanvas();
+        canvas.drawColor(Color.RED);
+        ourHolder.unlockCanvasAndPost(canvas);
+        prepareLevel();
+        lives -= 1;
     }
 
     private void draw(){
@@ -215,7 +208,7 @@ private void prepareLevel(){
             canvas = ourHolder.lockCanvas();
 
             canvas.drawColor(Color.BLACK);
-            canvas.drawBitmap(spacerace, 0, bitmapYPosition, paint);
+//            canvas.drawBitmap(spacerace, 0, bitmapYPosition, paint);
 
             paint.setColor(Color.WHITE);
             hidden.setColor(Color.argb(0, 0, 0, 0));
@@ -225,7 +218,6 @@ private void prepareLevel(){
             paintOutline.setColor(Color.WHITE);
             paintOutline.setStyle(Paint.Style.STROKE);
 
-
             canvas.drawRect(token.getRect(), paintOutline);
             canvas.drawRect(asteroid.getRect(), paintOutline);
             canvas.drawRect(asteroidBig.getRect(), paintOutline);
@@ -234,9 +226,15 @@ private void prepareLevel(){
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
             paint.setTextSize(50);
-            canvas.drawText("Score: " + score, 100, 100, paint);
-            canvas.drawText("Lives: " + lives, screenX - 300, 100, paint);
+            canvas.drawText("Score: " + score, 150, 100, paint);
+            canvas.drawText("Lives: " + lives, screenX - 200, 100, paint);
 
+            if (lives <= 0){
+                paint.setTextSize(200);
+                canvas.drawText("GAME OVER", screenX / 2, 600, paint);
+                paint.setTextSize(90);
+                canvas.drawText(" your final Score was: " + score, screenX / 2, 1000, paint);
+            }
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
@@ -265,7 +263,6 @@ private void prepareLevel(){
 
                     player.setMovementState(player.RIGHT);
                 } else
-
                 {
                         player.setMovementState(player.LEFT);
                 }

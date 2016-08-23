@@ -24,6 +24,7 @@ public class Player {
         length = 130;
         height = 40;
 
+
         x = screenX / 2;
         y = screenY - 150;
 
@@ -53,11 +54,9 @@ public class Player {
         rect.right = x + length;
     }
 
-    public void leftWallBlock(){
-        x = 200;
+    public void moveShip(int n){
+        x = n;
     }
 
-    public void rightWallBlock(){
-        x = x - 200;
-        }
-    }
+
+}
