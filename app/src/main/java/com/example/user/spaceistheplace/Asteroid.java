@@ -38,16 +38,16 @@ public class Asteroid {
 
     public void update(long fps) {
         y = y + asteroidSpeed / fps;
-//        if (asteroidDirection > 10){
-//            x = x + asteroidDrift / fps;
-//        }
-//        else{
-//            x = x - asteroidDrift / fps;
-//        }
+        if (asteroidDirection > 10){
+            x = x + asteroidDrift / fps;
+        }
+        else{
+            x = x - asteroidDrift / fps;
+        }
         rect.top = y;
         rect.bottom = y + height;
-//        rect.left = x;
-//        rect.right = x + length;
+        rect.left = x;
+        rect.right = x + length;
     }
 
 }
