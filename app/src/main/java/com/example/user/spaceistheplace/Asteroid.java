@@ -13,8 +13,11 @@ public class Asteroid {
     protected float y;
 
     protected float asteroidSpeed;
+    protected int asteroidDrift;
+    protected int asteroidDirection;
 
-    public Asteroid(int length, int height, int x, int y, int asteroidSpeed ){
+
+    public Asteroid(int length, int height, int x, int y, int asteroidSpeed, int asteroidDrift, int asteroidDirection ){
 
         this.length = length;
         this.height = height;
@@ -23,6 +26,8 @@ public class Asteroid {
         this.y = y;
 
         this.asteroidSpeed = asteroidSpeed;
+        this.asteroidDrift = asteroidDrift;
+        this.asteroidDirection = asteroidDirection;
 
         rect = new RectF(x, y, x + length, y + height);
     }
@@ -33,8 +38,16 @@ public class Asteroid {
 
     public void update(long fps) {
         y = y + asteroidSpeed / fps;
+//        if (asteroidDirection > 10){
+//            x = x + asteroidDrift / fps;
+//        }
+//        else{
+//            x = x - asteroidDrift / fps;
+//        }
         rect.top = y;
         rect.bottom = y + height;
+//        rect.left = x;
+//        rect.right = x + length;
     }
 
 }

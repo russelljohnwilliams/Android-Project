@@ -51,6 +51,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     int numStars = 0;
     int numAsteroids = 0;
 
+
     public SpaceGameView(Context context, int x, int y) {
 
         super(context);
@@ -66,8 +67,14 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         screenX = x;
         screenY = y;
         prepareLevel();
-    }
 
+    }
+//    private void restartGame(){
+//        lives = 3;
+//        score = 0;
+//        prepareLevel();
+//    }
+//
     private void prepareLevel(){
         stars = new Token[70];
         asteroidsSmall = new Asteroid[3];
@@ -75,7 +82,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         leftWall = new Wall(screenY, 5,  0,  0);
         rightWall = new Wall(screenY, 5,  screenX, 0);
-        floor = new Wall(100, screenX, 0, screenY + screenY);
+        floor = new Wall(100, screenX * 3, -screenX, screenY + screenY);
         createToken();
         createAsteroid();
         createAsteroidBig();
@@ -98,7 +105,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             stars[i] = new Token(screenY / 160, screenY / 160, x, y, s, 0 );
             numStars ++;
-//            stars[i].setMovementState(stars[i].DOWN);
             Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
         }
     }
@@ -107,14 +113,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         int z = randomNumber(screenX, 100);
         token = new Token (screenY / 20, screenY / 20, z, 0 - 55, 1000, 1);
-//        token.setMovementState(token.DOWN);
+        Log.d("CONSOLE LOG :", "TOKEN CREATED");
     }
 
     private void createAsteroid(){
         int z = randomNumber(screenX, 100 * -2);
+        int a = randomNumber(screenX, 1 - 20);
         int y = 0 - screenY / 2;
-        asteroid = new Asteroid(screenX / 4, screenX / 4, z, y, 800);
-//        asteroid.setMovementState(token.DOWN);
+        asteroid = new Asteroid(screenX / 4, screenX / 4, z, y, 800, 250, a);
+        Log.d("CONSOLE LOG :", "ASTEROIDS CREATED");
     }
 
     private void createSmallAsteroids(){
@@ -124,19 +131,22 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             int x = randomNumber(screenX, 1);
             int y = randomNumber(0 - 20, 0 - 1000);
             int s = randomNumber(1200, 900);
-
-            asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s );
+            int a = randomNumber(screenX, 1 - 20);
+            asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 250, a);
             numAsteroids ++;
-//            asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
+            Log.d("CONSOLE LOG :", "SMALL ASTEROIDS CREATED");
+
         }
     }
 
     private void createAsteroidBig(){
+            int a = randomNumber(screenX, 1 - 20);
             int z = randomNumber(screenX-800, 1);
             int y = 0 - screenY - 20;
-            asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 500);
-//            asteroidBig.setMovementState(token.DOWN);
-        }
+            asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 500, 250, a);
+        Log.d("CONSOLE LOG :", "BIG ASTEROIDS CREATED");
+
+    }
 
     @Override
     public void run() {
@@ -182,7 +192,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             ourHolder.unlockCanvasAndPost(canvas);
             createToken();
             score += token.getValue();
-            Log.d("CONSOLE LOG", "POINTS SCORED FOR CATCHING THE BALL!!!");
+            Log.d("CONSOLE LOG", "POINTS SCORED FOR CATCHING THE TOKEN!!!");
         }
 
         if (RectF.intersects(asteroid.getRect(), player.getRect())) {
@@ -192,12 +202,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         if (RectF.intersects(player.getRect(), asteroidBig.getRect())) {
             hitByAsteroid();
-            Log.d("CONSOLE LOG", "HIT BY STEROID!!!");
+            Log.d("CONSOLE LOG", "HIT BY ASTEROID!!!");
         }
-        for(int i = 0; i < asteroidsSmall.length; i++) {
-            if (RectF.intersects(player.getRect(), asteroidsSmall[i].getRect())) {
+        for (Asteroid anAsteroidsSmall : asteroidsSmall) {
+            if (RectF.intersects(player.getRect(), anAsteroidsSmall.getRect())) {
                 hitByAsteroid();
-                Log.d("CONSOLE LOG", "HIT BY STEROID!!!");
+                Log.d("CONSOLE LOG", "HIT BY ASTEROID!!!");
             }
         }
         if (RectF.intersects(leftWall.getRect(), player.getRect())) {
@@ -233,7 +243,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 int s = randomNumber(600, 300);
 
                 stars[i] = new Token(5, 5, x, y, s, 0 );
-//                stars[i].setMovementState(stars[i].DOWN);
                 Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
             }
         }
@@ -244,16 +253,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 int x = randomNumber(screenX, 1);
                 int y = randomNumber(0 - 20, 0 - 1000);
                 int s = randomNumber(1000, 700);
+                int a = randomNumber(screenX, 1 - 20);
 
-                asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s);
-//                asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
+                asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s, 250, a);
                 Log.d("CONSOLE LOG", "SMALL ASTEROID HIT THE FLOOR!!!");
             }
         }
 
             if (lives <= 0) {
                 player.moveShip(2500);
-
                 Log.d("CONSOLE LOG", "GAME OVER!!!");
             }
         }
@@ -327,20 +335,25 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+
+
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+
             case MotionEvent.ACTION_DOWN:
-            paused = false;
-            if (motionEvent.getX() > screenX / 2) {
+//
+                    paused = false;
 
-                player.setMovementState(player.RIGHT);
-            } else
-            {
-                player.setMovementState(player.LEFT);
-            }
-            break;
+                    if (motionEvent.getX() > screenX / 2) {
 
-            case MotionEvent.ACTION_UP:
-                player.setMovementState(player.STOPPED);
+                        player.setMovementState(player.RIGHT);
+                    } else {
+                        player.setMovementState(player.LEFT);
+                    }
+
+                    break;
+
+                    case MotionEvent.ACTION_UP:
+                        player.setMovementState(player.STOPPED);
                 break;
 
         }
