@@ -106,7 +106,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void createToken(){
 
         int z = randomNumber(screenX, 100);
-        token = new Token (screenY / 17, screenY / 17, z, 0 - 55, 1000, 1);
+        token = new Token (screenY / 20, screenY / 20, z, 0 - 55, 1000, 1);
         token.setMovementState(token.DOWN);
     }
 
@@ -125,7 +125,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             int y = randomNumber(0 - 20, 0 - 1000);
             int s = randomNumber(1200, 900);
 
-            asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s );
+            asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s );
             numAsteroids ++;
             asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
         }
