@@ -25,7 +25,6 @@ public class Player extends GameObjects {
         rect = new RectF(x, y, x + length, y + width);
     }
 
-
     public void setMovementState(int state) {
         playerMoving = state;
     }

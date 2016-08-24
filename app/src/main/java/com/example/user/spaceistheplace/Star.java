@@ -1,11 +1,8 @@
 package com.example.user.spaceistheplace;
 
-
 import android.graphics.RectF;
 
 public class Star extends GameObjects{
-
-
 
     protected int starSpeed;
 
@@ -22,8 +19,6 @@ public class Star extends GameObjects{
 
         rect = new RectF(x, y, x + length, y + width);
     }
-
-
 
     public void update(float fps) {
         y = y + starSpeed / fps;

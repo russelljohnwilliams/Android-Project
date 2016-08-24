@@ -32,7 +32,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private int score = 0;
     private int lives = 3;
-
+    private int speed = 1000;
     private Player player;
 
     protected Token token;
@@ -157,7 +157,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             timeThisFrame = System.currentTimeMillis() - startFrameTime;
 
             if (timeThisFrame >= 1) {
-                fps = 1000 / timeThisFrame;
+                fps = speed / timeThisFrame;
             }
         }
     }
@@ -174,12 +174,24 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             anAsteroidsSmall1.update(fps);
         }
 
-        if (score > 1) {
+        if (score > 5) {
             asteroid.update(fps);
         }
 
-        if (score > 2) {
+        if (score > 10) {
             asteroidBig.update(fps);
+        }
+
+        if (score > 15) {
+            speed = 900;
+        }
+
+        if (score > 20){
+            speed = 750;
+        }
+
+        if (score > 30){
+            speed = 600;
         }
 
         if (RectF.intersects(token.getRect(), player.getRect())) {
@@ -239,6 +251,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             if (lives <= 0) {
                 player.moveShip(2500);
                 paused = false;
+                speed = 1000;
             }
         }
 

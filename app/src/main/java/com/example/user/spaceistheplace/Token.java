@@ -3,23 +3,15 @@ package com.example.user.spaceistheplace;
 
 import android.graphics.RectF;
 
-public class Token {
-
-    protected RectF rect;
-
-    protected int length;
-    protected int height;
-
-    protected float x;
-    protected float y;
+public class Token extends GameObjects {
 
     protected int tokenSpeed;
 
     protected int value;
 
-    public Token(int length, int height, int x, int y, int tokenSpeed, int value){
+    public Token(int length, int width, int x, int y, int tokenSpeed, int value){
         this.length = length;
-        this.height = height;
+        this.width = width;
 
         this.x = x;
         this.y = y;
@@ -28,11 +20,7 @@ public class Token {
 
         this.value = value;
 
-        rect = new RectF(x, y, x + length, y + height);
-    }
-
-    public RectF getRect() {
-        return rect;
+        rect = new RectF(x, y, x + length, y + width);
     }
 
     public int getValue(){
@@ -42,7 +30,7 @@ public class Token {
     public void update(float fps) {
         y = y + tokenSpeed / fps;
         rect.top = y;
-        rect.bottom = y + height;
+        rect.bottom = y + width;
     }
 
 }
