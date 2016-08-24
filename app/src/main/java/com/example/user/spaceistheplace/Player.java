@@ -2,35 +2,32 @@ package com.example.user.spaceistheplace;
 
 import android.graphics.RectF;
 
-
-
 public class Player {
 
-    private RectF rect;
-    float length;
-    float height;
-    float x;
-    float y;
+    protected RectF rect;
+    protected int length;
+    protected int height;
+    protected float x;
+    protected float y;
+    protected int playerSpeed;
 
-    private float paddleSpeed;
+    protected final int STOPPED = 0;
+    protected final int RIGHT = 1;
+    protected final int LEFT = 2;
 
-    public final int STOPPED = 0;
-    public final int RIGHT = 1;
-    public final int LEFT = 2;
+    protected int playerMoving = STOPPED;
 
-    private int paddleMoving = STOPPED;
+    public Player(int length, int height, float x, float y, int playerSpeed) {
 
-    public Player(int screenX, int screenY) {
-        length = 130;
-        height = 40;
+        this.length = length;
+        this.height = height;
 
+        this.x = x;
+        this.y = y;
 
-        x = screenX / 2;
-        y = screenY - 150;
+        this.playerSpeed = playerSpeed;
 
         rect = new RectF(x, y, x + length, y + height);
-
-        paddleSpeed = 3000;
     }
 
     public RectF getRect() {
@@ -38,16 +35,16 @@ public class Player {
     }
 
     public void setMovementState(int state) {
-        paddleMoving = state;
+        playerMoving = state;
     }
 
     public void update(long fps) {
-        if (paddleMoving == LEFT) {
-            x = x - paddleSpeed / fps;
+        if (playerMoving == LEFT) {
+            x = x - playerSpeed / fps;
         }
 
-        if (paddleMoving == RIGHT) {
-            x = x + paddleSpeed / fps;
+        if (playerMoving == RIGHT) {
+            x = x + playerSpeed / fps;
         }
 
         rect.left = x;
@@ -57,6 +54,5 @@ public class Player {
     public void moveShip(int n){
         x = n;
     }
-
 
 }

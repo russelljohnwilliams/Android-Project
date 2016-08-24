@@ -3,8 +3,6 @@ package com.example.user.spaceistheplace;
 
 import android.graphics.RectF;
 
-import java.util.Random;
-
 public class Token {
 
     protected RectF rect;
@@ -15,12 +13,7 @@ public class Token {
     protected float x;
     protected float y;
 
-    public final int STOPPED = 0;
-    public final int UP = 1;
-    public final int DOWN = 2;
-
     protected int tokenSpeed;
-    protected int tokenMoving = STOPPED;
 
     protected int value;
 
@@ -46,23 +39,11 @@ public class Token {
         return value;
     }
 
-    public void setMovementState(int state) {
-        tokenMoving = state;
-    }
-
     public void update(float fps) {
-        if (tokenMoving == UP) {
-            y = y - tokenSpeed / fps;
-        }
-
-        if (tokenMoving == DOWN) {
-            y = y + tokenSpeed / fps;
-        }
-
+        y = y + tokenSpeed / fps;
         rect.top = y;
         rect.bottom = y + height;
     }
-
 
 }
 

@@ -71,7 +71,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void prepareLevel(){
         stars = new Token[70];
         asteroidsSmall = new Asteroid[3];
-        player = new Player (screenX, screenY); // <<< ---- refactor this guy!!!
+        player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 3000); // <<< ---- refactor this guy!!!
 
         leftWall = new Wall(screenY, 5,  0,  0);
         rightWall = new Wall(screenY, 5,  screenX, 0);
@@ -98,7 +98,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             stars[i] = new Token(screenY / 160, screenY / 160, x, y, s, 0 );
             numStars ++;
-            stars[i].setMovementState(stars[i].DOWN);
+//            stars[i].setMovementState(stars[i].DOWN);
             Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
         }
     }
@@ -107,14 +107,14 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         int z = randomNumber(screenX, 100);
         token = new Token (screenY / 20, screenY / 20, z, 0 - 55, 1000, 1);
-        token.setMovementState(token.DOWN);
+//        token.setMovementState(token.DOWN);
     }
 
     private void createAsteroid(){
         int z = randomNumber(screenX, 100 * -2);
         int y = 0 - screenY / 2;
         asteroid = new Asteroid(screenX / 4, screenX / 4, z, y, 800);
-        asteroid.setMovementState(token.DOWN);
+//        asteroid.setMovementState(token.DOWN);
     }
 
     private void createSmallAsteroids(){
@@ -127,7 +127,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s );
             numAsteroids ++;
-            asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
+//            asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
         }
     }
 
@@ -135,7 +135,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             int z = randomNumber(screenX-800, 1);
             int y = 0 - screenY - 20;
             asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 500);
-            asteroidBig.setMovementState(token.DOWN);
+//            asteroidBig.setMovementState(token.DOWN);
         }
 
     @Override
@@ -233,7 +233,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 int s = randomNumber(600, 300);
 
                 stars[i] = new Token(5, 5, x, y, s, 0 );
-                stars[i].setMovementState(stars[i].DOWN);
+//                stars[i].setMovementState(stars[i].DOWN);
                 Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
             }
         }
@@ -246,7 +246,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 int s = randomNumber(1000, 700);
 
                 asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s);
-                asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
+//                asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
                 Log.d("CONSOLE LOG", "SMALL ASTEROID HIT THE FLOOR!!!");
             }
         }
