@@ -44,7 +44,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Wall rightWall;
     private Wall floor;
 
-    private Token[] stars;
+    private Star[] stars;
     private Asteroid[] asteroidsSmall;
 
     private Canvas canvas;
@@ -79,7 +79,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     }
 //
     private void prepareLevel(){
-        stars = new Token[70];
+        stars = new Star[70];
         asteroidsSmall = new Asteroid[2];
         player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 1000);
         leftWall = new Wall(screenY + 20, 5,  0,  0);
@@ -107,7 +107,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         int x = randomNumber(screenX, 1);
         int y = randomNumber(screenY, screenY * -1);
         int s = randomNumber(600, 200);
-        stars[i] = new Token(screenY / 160, screenY / 160, x, y, s, 0 );
+        stars[i] = new Star(screenY / 160, screenY / 160, x, y, s );
     }
 
     private void createToken(){

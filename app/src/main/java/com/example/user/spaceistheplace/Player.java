@@ -2,13 +2,8 @@ package com.example.user.spaceistheplace;
 
 import android.graphics.RectF;
 
-public class Player {
+public class Player extends GameObjects {
 
-    protected RectF rect;
-    protected int length;
-    protected int height;
-    protected float x;
-    protected float y;
     protected int playerSpeed;
 
     protected final int STOPPED = 0;
@@ -17,22 +12,19 @@ public class Player {
 
     protected int playerMoving = STOPPED;
 
-    public Player(int length, int height, float x, float y, int playerSpeed) {
+    public Player(int length, int width, float x, float y, int playerSpeed) {
 
         this.length = length;
-        this.height = height;
+        this.width = width;
 
         this.x = x;
         this.y = y;
 
         this.playerSpeed = playerSpeed;
 
-        rect = new RectF(x, y, x + length, y + height);
+        rect = new RectF(x, y, x + length, y + width);
     }
 
-    public RectF getRect() {
-        return rect;
-    }
 
     public void setMovementState(int state) {
         playerMoving = state;

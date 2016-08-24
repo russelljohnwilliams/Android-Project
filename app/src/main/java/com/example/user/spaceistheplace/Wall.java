@@ -3,15 +3,7 @@ package com.example.user.spaceistheplace;
 import android.graphics.RectF;
 
 
-public class Wall {
-
-    protected RectF rect;
-
-    protected int length;
-    protected int width;
-
-    protected int x;
-    protected int y;
+public class Wall extends GameObjects {
 
 
     public Wall(int length, int width, int x, int y){
@@ -26,9 +18,6 @@ public class Wall {
 
     }
 
-    public RectF getRect(){
-        return rect;
-    }
 
 }
 
