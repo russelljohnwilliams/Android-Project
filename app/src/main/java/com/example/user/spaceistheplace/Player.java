@@ -29,6 +29,10 @@ public class Player extends GameObjects {
         playerMoving = state;
     }
 
+    //this sets the speed of the controls, if the onTouchEvent detects a
+    // left or right press on the screen, then this will work out if
+    // the x position should be - or + of the current position.
+
     public void update(long fps) {
         if (playerMoving == LEFT) {
             x = x - playerSpeed / fps;
@@ -42,6 +46,8 @@ public class Player extends GameObjects {
         rect.right = x + length;
     }
 
+    // this moves the ship, it is used for the intersect, to stop the ship going through the wall
+    // and also at the end of the game, the ship is removed from the playable area.
     public void moveShip(int n){
         x = n;
     }

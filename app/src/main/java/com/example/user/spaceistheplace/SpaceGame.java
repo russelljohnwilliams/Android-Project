@@ -29,7 +29,6 @@ public class SpaceGame extends Activity {
 
         spaceGameView = new SpaceGameView(this, size.x, size.y);
         setContentView(spaceGameView);
-
     }
 
 

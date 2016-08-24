@@ -24,6 +24,10 @@ public class Asteroid extends GameObjects {
         rect = new RectF(x, y, x + length, y + height);
     }
 
+    // moves the asteroids just like all other objects that move do
+    // but this also moves in two directions, down and either right or left
+    // determined using the random function in the SpaceGameView class.
+    // it alows the asteroids to 'drift' gradually either left or right.
     public void update(long fps) {
         y = y + asteroidSpeed / fps;
         if (asteroidDirection > 10){
