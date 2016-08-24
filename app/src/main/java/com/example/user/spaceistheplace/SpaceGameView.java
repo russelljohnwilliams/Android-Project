@@ -48,8 +48,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Wall floor;
     private Token[] stars;
     private Asteroid[] asteroidsSmall;
-    int numStars = 0;
-    int numAsteroids = 0;
 
 
     public SpaceGameView(Context context, int x, int y) {
@@ -78,16 +76,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void prepareLevel(){
         stars = new Token[70];
         asteroidsSmall = new Asteroid[2];
-        player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 3000);
-
-        leftWall = new Wall(screenY, 5,  0,  0);
-        rightWall = new Wall(screenY, 5,  screenX, 0);
+        player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 1300);
+        leftWall = new Wall(screenY + 20, 5,  0,  0);
+        rightWall = new Wall(screenY + 20, 5,  screenX, 0);
         floor = new Wall(100, screenX * 3, -screenX, screenY + screenY);
         createToken();
         createAsteroid();
         createAsteroidBig();
-        createTheStars();
-        createSmallAsteroids();
+        loopTheStars();
+        loopSmallAsteroids();
     }
 
     private int randomNumber(int a, int b){
@@ -95,57 +92,51 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         return r.nextInt(a - b) + b;
     }
 
-    private void createTheStars() {
-        numStars = 0;
+    private void loopTheStars() {
         for (int i = 0; i < stars.length ; i++) {
-
-            int x = randomNumber(screenX, 1);
-            int y = randomNumber(screenY, screenY * -1);
-            int s = randomNumber(1200, 600);
-
-            stars[i] = new Token(screenY / 160, screenY / 160, x, y, s, 0 );
-            numStars ++;
-            Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
+            createTheStars(i);
         }
+    }
+
+    private void createTheStars(int i){
+        int x = randomNumber(screenX, 1);
+        int y = randomNumber(screenY, screenY * -1);
+        int s = randomNumber(700, 300);
+        stars[i] = new Token(screenY / 160, screenY / 160, x, y, s, 0 );
     }
 
     private void createToken(){
 
         int z = randomNumber(screenX, 100);
-        token = new Token (screenY / 20, screenY / 20, z, 0 - 55, 1000, 1);
-        Log.d("CONSOLE LOG :", "TOKEN CREATED");
+        token = new Token (screenY / 20, screenY / 20, z, 0 - 55, 400, 1);
     }
 
     private void createAsteroid(){
         int z = randomNumber(screenX, 100 * -2);
         int a = randomNumber(screenX, 1 - 20);
         int y = 0 - screenY / 2;
-        asteroid = new Asteroid(screenX / 4, screenX / 4, z, y, 800, 150, a);
-        Log.d("CONSOLE LOG :", "ASTEROIDS CREATED");
+        asteroid = new Asteroid(screenX / 4, screenX / 4, z, y, 400, 50, a);
     }
 
-    private void createSmallAsteroids(){
-        numAsteroids = 0;
+    private void loopSmallAsteroids(){
         for (int i = 0; i < asteroidsSmall.length; i++) {
-
-            int x = randomNumber(screenX, 1);
-            int y = randomNumber(0 - 20, 0 - 1000);
-            int s = randomNumber(1200, 900);
-            int a = randomNumber(screenX, 1 - 20);
-            asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 200, a);
-            numAsteroids ++;
-            Log.d("CONSOLE LOG :", "SMALL ASTEROIDS CREATED");
-
+            createSmallAsteroids(i);
         }
+    }
+
+    private void createSmallAsteroids (int i){
+        int x = randomNumber(screenX, 1);
+        int y = randomNumber(0 - 20, 0 - 1000);
+        int s = randomNumber(700, 450);
+        int a = randomNumber(screenX, 1 - 20);
+        asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 100, a);
     }
 
     private void createAsteroidBig(){
             int a = randomNumber(screenX, 1 - 20);
             int z = randomNumber(screenX-800, 1);
             int y = 0 - screenY - 20;
-            asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 500, 150, a);
-        Log.d("CONSOLE LOG :", "BIG ASTEROIDS CREATED");
-
+            asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 250, 75, a);
     }
 
     @Override
@@ -161,7 +152,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             timeThisFrame = System.currentTimeMillis() - startFrameTime;
 
             if (timeThisFrame >= 1) {
-                fps = 2000 / timeThisFrame;
+                fps = 1300 / timeThisFrame;
             }
         }
     }
@@ -170,12 +161,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         player.update(fps);
         token.update(fps);
-        for(int i = 0; i < numStars; i++){
+        for(int i = 0; i < stars.length; i++){
             stars[i].update(fps);
         }
 
-        for(int i = 0; i < numAsteroids; i++){
-            asteroidsSmall[i].update(fps);
+        for (Asteroid anAsteroidsSmall1 : asteroidsSmall) {
+            anAsteroidsSmall1.update(fps);
         }
 
         if (score > 1) {
@@ -186,83 +177,62 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             asteroidBig.update(fps);
         }
 
-         if (RectF.intersects(token.getRect(), player.getRect())) {
+        if (RectF.intersects(token.getRect(), player.getRect())) {
             canvas = ourHolder.lockCanvas();
             canvas.drawColor(Color.WHITE);
             ourHolder.unlockCanvasAndPost(canvas);
             createToken();
             score += token.getValue();
-            Log.d("CONSOLE LOG", "POINTS SCORED FOR CATCHING THE TOKEN!!!");
         }
 
         if (RectF.intersects(asteroid.getRect(), player.getRect())) {
             hitByAsteroid();
-            Log.d("CONSOLE LOG", "YOU LOST A LIFE!!!");
         }
 
         if (RectF.intersects(player.getRect(), asteroidBig.getRect())) {
             hitByAsteroid();
-            Log.d("CONSOLE LOG", "HIT BY ASTEROID!!!");
         }
+
         for (Asteroid anAsteroidsSmall : asteroidsSmall) {
             if (RectF.intersects(player.getRect(), anAsteroidsSmall.getRect())) {
                 hitByAsteroid();
-                Log.d("CONSOLE LOG", "HIT BY ASTEROID!!!");
             }
         }
+
         if (RectF.intersects(leftWall.getRect(), player.getRect())) {
             player.moveShip(100);
-            Log.d("CONSOLE LOG", "HIT THE LEFT WALL!!!");
         }
 
         if (RectF.intersects(rightWall.getRect(), player.getRect())) {
             player.moveShip(screenX - 200);
-            Log.d("CONSOLE LOG", "HIT THE RIGHT WALL!!!");
         }
 
         if (RectF.intersects(floor.getRect(), token.getRect())) {
             createToken();
-            Log.d("CONSOLE LOG", "TOKEN HIT THE FLOOR!!!");
         }
 
         if (RectF.intersects(floor.getRect(), asteroid.getRect())) {
             createAsteroid();
-            Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
         }
 
         if (RectF.intersects(floor.getRect(), asteroidBig.getRect())) {
             createAsteroidBig();
-            Log.d("CONSOLE LOG", "BIG ASTEROID HIT THE FLOOR!!!");
         }
 
-        for(int i = 0; i < 70; i++) {
+        for(int i = 0; i < stars.length; i++) {
             if (RectF.intersects(stars[i].getRect(), floor.getRect())) {
-
-                int x = randomNumber(screenX, 1);
-                int y = randomNumber(screenY, 1);
-                int s = randomNumber(600, 300);
-
-                stars[i] = new Token(5, 5, x, y, s, 0 );
-                Log.d("CONSOLE LOG", "ASTEROID HIT THE FLOOR!!!");
+                createTheStars(i);
             }
         }
 
         for(int i = 0; i < asteroidsSmall.length; i++) {
             if (RectF.intersects(asteroidsSmall[i].getRect(), floor.getRect())) {
-
-                int x = randomNumber(screenX, 1);
-                int y = randomNumber(0 - 20, 0 - 1000);
-                int s = randomNumber(1000, 700);
-                int a = randomNumber(screenX, 1 - 20);
-
-                asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s, 200, a);
-                Log.d("CONSOLE LOG", "SMALL ASTEROID HIT THE FLOOR!!!");
+                createSmallAsteroids(i);
             }
         }
 
             if (lives <= 0) {
                 player.moveShip(2500);
-                Log.d("CONSOLE LOG", "GAME OVER!!!");
                 paused = false;
             }
         }
@@ -281,14 +251,17 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas = ourHolder.lockCanvas();
 
             hidden.setColor(Color.argb(0, 0, 0, 0));
+
             grey.setColor(Color.argb(100, 255, 255, 255));
+
             paintOutline.setStrokeWidth(2);
             paintOutline.setColor(Color.WHITE);
             paintOutline.setStyle(Paint.Style.STROKE);
+            paintOutline.setTextAlign(Paint.Align.CENTER);
 
             paint.setColor(Color.WHITE);
             paint.setTextAlign(Paint.Align.CENTER);
-            paint.setTextSize(50);
+            paint.setTextSize(screenY / 20);
 
             canvas.drawColor(Color.BLACK);
             canvas.drawRect(player.getRect(), paint);
@@ -298,22 +271,26 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas.drawRect(leftWall.getRect(), hidden);
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
-            canvas.drawText("Score: " + score, 150, 100, paint);
-            canvas.drawText("Lives: " + lives, screenX - 200, 100, paint);
 
-            for (int i = 0; i < numStars; i++) {
+            canvas.drawText("Score: " + score, screenX / 12, 100, paint);
+            canvas.drawText("Lives: " + lives, screenX / 15 * 14, 100, paint);
+
+            for (int i = 0; i < stars.length; i++) {
                 canvas.drawRect(stars[i].getRect(), grey);
             }
 
-            for (int i = 0; i < numAsteroids; i++) {
+            for (int i = 0; i < asteroidsSmall.length; i++) {
                 canvas.drawRect(asteroidsSmall[i].getRect(), paintOutline);
             }
 
             if (lives <= 0){
-                paint.setTextSize(200);
-                canvas.drawText("GAME OVER", screenX / 2, screenY / 3, paint);
-                paint.setTextSize(90);
-                canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 3 * 2, paint);
+                paintOutline.setTextSize(screenX / 6);
+                canvas.drawText("GAME", screenX / 3, screenY / 3, paintOutline);
+                canvas.drawText("OVER", screenX / 3 * 2, screenY / 5 * 3, paintOutline);
+//                paint.setTextSize(screenY / 16);
+                canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 7 * 5, paint);
+                canvas.drawText("click anywhere the start again",screenX / 2, screenY / 7 * 6, paint);
+
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
