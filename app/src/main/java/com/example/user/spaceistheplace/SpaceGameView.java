@@ -29,6 +29,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Paint paint;
     private Paint paintOutline;
     private Paint hidden;
+    private Paint grey;
     private long fps;
 
     private long timeThisFrame;
@@ -46,7 +47,9 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private Wall rightWall;
     private Wall floor;
     private Token[] stars;
+    private Asteroid[] asteroidsSmall;
     int numStars = 0;
+    int numAsteroids = 0;
 
     public SpaceGameView(Context context, int x, int y) {
 
@@ -56,11 +59,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         ourHolder = getHolder();
 
-
         paint = new Paint();
         paintOutline = new Paint();
         hidden = new Paint();
-
+        grey = new Paint();
         screenX = x;
         screenY = y;
         prepareLevel();
@@ -68,7 +70,9 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private void prepareLevel(){
         stars = new Token[70];
-        player = new Player (screenX, screenY);
+        asteroidsSmall = new Asteroid[3];
+        player = new Player (screenX, screenY); // <<< ---- refactor this guy!!!
+
         leftWall = new Wall(screenY, 5,  0,  0);
         rightWall = new Wall(screenY, 5,  screenX, 0);
         floor = new Wall(100, screenX, 0, screenY + screenY);
@@ -76,73 +80,68 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         createAsteroid();
         createAsteroidBig();
         createTheStars();
+        createSmallAsteroids();
     }
-
-
-
-    private void createTheStars() {
-        numStars = 0;
-        for (int i = 0; i < 70; i++) {
-//            Random r = new Random();
-//            int x = r.nextInt(screenX - 1) + 1;
-//            Random ra = new Random();
-//            int y = ra.nextInt(screenY - screenY * -1 ) + screenY * -1 ;
-//            Random ran = new Random();
-//            int s = ran.nextInt(600 - 300) + 300;
-
-            int x = randomNumber(screenX, 1);
-            int y = randomNumber(screenY, screenY * -1);
-            int s = randomNumber(600, 300);
-
-            stars[i] = new Token(5, 5, x, y, s, 0 );
-            numStars ++;
-            stars[i].setMovementState(stars[i].DOWN);
-            Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
-        }
-    }
-
-
-
 
     private int randomNumber(int a, int b){
         Random r = new Random();
         return r.nextInt(a - b) + b;
     }
 
+    private void createTheStars() {
+        numStars = 0;
+        for (int i = 0; i < stars.length ; i++) {
+
+            int x = randomNumber(screenX, 1);
+            int y = randomNumber(screenY, screenY * -1);
+            int s = randomNumber(1200, 600);
+
+            stars[i] = new Token(screenY / 160, screenY / 160, x, y, s, 0 );
+            numStars ++;
+            stars[i].setMovementState(stars[i].DOWN);
+            Log.d("CONSOLE LOG :", "WE DID IT, WE MADE THE STARS");
+        }
+    }
+
     private void createToken(){
-//        Random r = new Random();
-//        int z = r.nextInt(screenX - 100) + 100;
+
         int z = randomNumber(screenX, 100);
-        token = new Token (50, 50, z, 100, 500, 1);
+        token = new Token (screenY / 17, screenY / 17, z, 0 - 55, 1000, 1);
         token.setMovementState(token.DOWN);
     }
 
     private void createAsteroid(){
-//        Random r = new Random();
-//        int z = r.nextInt(screenX - 100 * -2) + 100 * -2;
-
         int z = randomNumber(screenX, 100 * -2);
-        int y = screenY - screenY * 2;
-        asteroid = new Asteroid(500, 500, z, y, 400);
+        int y = 0 - screenY / 2;
+        asteroid = new Asteroid(screenX / 4, screenX / 4, z, y, 800);
         asteroid.setMovementState(token.DOWN);
     }
 
-    private void createAsteroidBig(){
-//            Random r = new Random();
-//            int z = r.nextInt(screenX-800 - 1) + 1;
+    private void createSmallAsteroids(){
+        numAsteroids = 0;
+        for (int i = 0; i < asteroidsSmall.length; i++) {
 
+            int x = randomNumber(screenX, 1);
+            int y = randomNumber(0 - 20, 0 - 1000);
+            int s = randomNumber(1200, 900);
+
+            asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s );
+            numAsteroids ++;
+            asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
+        }
+    }
+
+    private void createAsteroidBig(){
             int z = randomNumber(screenX-800, 1);
-            int y = screenY - 2200;
-            asteroidBig = new Asteroid(900, 900, z, y, 250);
+            int y = 0 - screenY - 20;
+            asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 500);
             asteroidBig.setMovementState(token.DOWN);
         }
-
 
     @Override
     public void run() {
         while (playing) {
             long startFrameTime = System.currentTimeMillis();
-
             if(!paused){
                 update();
             }
@@ -152,7 +151,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             timeThisFrame = System.currentTimeMillis() - startFrameTime;
 
             if (timeThisFrame >= 1) {
-                fps = 1000 / timeThisFrame;
+                fps = 2000 / timeThisFrame;
             }
         }
     }
@@ -161,16 +160,19 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         player.update(fps);
         token.update(fps);
-
-        //bitmapYPosition +=5;
         for(int i = 0; i < numStars; i++){
             stars[i].update(fps);
         }
-        if (score > 5) {
+
+        for(int i = 0; i < numAsteroids; i++){
+            asteroidsSmall[i].update(fps);
+        }
+
+        if (score > 1) {
             asteroid.update(fps);
         }
 
-        if (score > 15) {
+        if (score > 2) {
             asteroidBig.update(fps);
         }
 
@@ -192,7 +194,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             hitByAsteroid();
             Log.d("CONSOLE LOG", "HIT BY STEROID!!!");
         }
-
+        for(int i = 0; i < asteroidsSmall.length; i++) {
+            if (RectF.intersects(player.getRect(), asteroidsSmall[i].getRect())) {
+                hitByAsteroid();
+                Log.d("CONSOLE LOG", "HIT BY STEROID!!!");
+            }
+        }
         if (RectF.intersects(leftWall.getRect(), player.getRect())) {
             player.moveShip(100);
             Log.d("CONSOLE LOG", "HIT THE LEFT WALL!!!");
@@ -220,13 +227,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         for(int i = 0; i < 70; i++) {
             if (RectF.intersects(stars[i].getRect(), floor.getRect())) {
-//                Random r = new Random();
-//                int x = r.nextInt(screenX - 1) + 1;
-//                Random ra = new Random();
-//                int y = ra.nextInt(screenY - 1 ) + 1 ;
-
-//                Random ran = new Random();
-//                int s = ran.nextInt(600 - 300) + 300;
 
                 int x = randomNumber(screenX, 1);
                 int y = randomNumber(screenY, 1);
@@ -238,9 +238,22 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             }
         }
 
+        for(int i = 0; i < asteroidsSmall.length; i++) {
+            if (RectF.intersects(asteroidsSmall[i].getRect(), floor.getRect())) {
+
+                int x = randomNumber(screenX, 1);
+                int y = randomNumber(0 - 20, 0 - 1000);
+                int s = randomNumber(1000, 700);
+
+                asteroidsSmall[i] = new Asteroid(screenY / 18, screenY / 18, x, y, s);
+                asteroidsSmall[i].setMovementState(asteroidsSmall[i].DOWN);
+                Log.d("CONSOLE LOG", "SMALL ASTEROID HIT THE FLOOR!!!");
+            }
+        }
 
             if (lives <= 0) {
                 player.moveShip(2500);
+
                 Log.d("CONSOLE LOG", "GAME OVER!!!");
             }
         }
@@ -259,7 +272,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas = ourHolder.lockCanvas();
 
             hidden.setColor(Color.argb(0, 0, 0, 0));
-
+            grey.setColor(Color.argb(100, 255, 255, 255));
             paintOutline.setStrokeWidth(2);
             paintOutline.setColor(Color.WHITE);
             paintOutline.setStyle(Paint.Style.STROKE);
@@ -270,7 +283,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             canvas.drawColor(Color.BLACK);
             canvas.drawRect(player.getRect(), paint);
-            canvas.drawRect(token.getRect(), paintOutline);
+            canvas.drawRect(token.getRect(), paint);
             canvas.drawRect(asteroid.getRect(), paintOutline);
             canvas.drawRect(asteroidBig.getRect(), paintOutline);
             canvas.drawRect(leftWall.getRect(), hidden);
@@ -280,14 +293,18 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas.drawText("Lives: " + lives, screenX - 200, 100, paint);
 
             for (int i = 0; i < numStars; i++) {
-                    canvas.drawRect(stars[i].getRect(), paint);
-                }
+                canvas.drawRect(stars[i].getRect(), grey);
+            }
+
+            for (int i = 0; i < numAsteroids; i++) {
+                canvas.drawRect(asteroidsSmall[i].getRect(), paintOutline);
+            }
 
             if (lives <= 0){
                 paint.setTextSize(200);
-                canvas.drawText("GAME OVER", screenX / 2, 600, paint);
+                canvas.drawText("GAME OVER", screenX / 2, screenY / 3, paint);
                 paint.setTextSize(90);
-                canvas.drawText(" your final Score was: " + score, screenX / 2, 800, paint);
+                canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 3 * 2, paint);
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -312,16 +329,15 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     public boolean onTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                paused = false;
-                if (motionEvent.getX() > screenX / 2) {
+            paused = false;
+            if (motionEvent.getX() > screenX / 2) {
 
-                    player.setMovementState(player.RIGHT);
-                } else
-                {
-                        player.setMovementState(player.LEFT);
-                }
-
-                break;
+                player.setMovementState(player.RIGHT);
+            } else
+            {
+                player.setMovementState(player.LEFT);
+            }
+            break;
 
             case MotionEvent.ACTION_UP:
                 player.setMovementState(player.STOPPED);

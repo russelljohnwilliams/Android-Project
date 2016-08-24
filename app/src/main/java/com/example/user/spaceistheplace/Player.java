@@ -30,7 +30,7 @@ public class Player {
 
         rect = new RectF(x, y, x + length, y + height);
 
-        paddleSpeed = 1500;
+        paddleSpeed = 3000;
     }
 
     public RectF getRect() {
