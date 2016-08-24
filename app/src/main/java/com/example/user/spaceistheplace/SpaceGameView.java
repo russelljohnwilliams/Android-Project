@@ -205,7 +205,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         }
 
         if (RectF.intersects(leftWall.getRect(), player.getRect())) {
-            player.moveShip(100);
+            player.moveShip(50);
         }
 
         if (RectF.intersects(rightWall.getRect(), player.getRect())) {
@@ -277,8 +277,8 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
 
-            canvas.drawText("Score: " + score, screenX / 12, 100, paint);
-            canvas.drawText("Lives: " + lives, screenX / 15 * 14, 100, paint);
+            canvas.drawText("Score: " + score, screenX / 12, screenY / 12 , paint);
+            canvas.drawText("Lives: " + lives, screenX / 15 * 14, screenY / 12, paint);
 
             for (int i = 0; i < stars.length; i++) {
                 canvas.drawRect(stars[i].getRect(), grey);
