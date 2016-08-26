@@ -210,6 +210,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         // asteroids to be released, now that the score is high enough to add a layer of
         // difficulty to the game
 
+
         if (score > 5) {
             asteroid.update(fps);
         }
@@ -339,7 +340,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
             hidden.setColor(Color.argb(0, 0, 0, 0));
 
-            grey.setColor(Color.argb(175, 255, 255, 255));
+            grey.setColor(Color.argb(125, 255, 255, 255));
 
             paintOutline.setStrokeWidth(2);
             paintOutline.setColor(Color.WHITE);
