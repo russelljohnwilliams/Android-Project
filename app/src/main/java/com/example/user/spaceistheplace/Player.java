@@ -4,7 +4,9 @@ import android.graphics.RectF;
 
 public class Player extends GameObjects {
 
-    protected int playerSpeed;
+    protected int playerRightSpeed;
+    protected int playerLeftSpeed;
+    protected int defaultSpeed;
 
     protected final int STOPPED = 0;
     protected final int RIGHT = 1;
@@ -12,7 +14,7 @@ public class Player extends GameObjects {
 
     protected int playerMoving = STOPPED;
 
-    public Player(int length, int width, float x, float y, int playerSpeed) {
+    public Player(int length, int width, float x, float y, int playerLeftSpeed, int playerRightSpeed, int defaultSpeed) {
 
         this.length = length;
         this.width = width;
@@ -20,7 +22,9 @@ public class Player extends GameObjects {
         this.x = x;
         this.y = y;
 
-        this.playerSpeed = playerSpeed;
+        this.playerLeftSpeed = playerLeftSpeed;
+        this.playerRightSpeed = playerRightSpeed;
+        this.defaultSpeed = defaultSpeed;
 
         rect = new RectF(x, y, x + length, y + width);
     }
@@ -35,11 +39,14 @@ public class Player extends GameObjects {
 
     public void update(long fps) {
         if (playerMoving == LEFT) {
-            x = x - playerSpeed / fps;
+            x = x - playerLeftSpeed / fps;
+            playerRightSpeed = defaultSpeed;
         }
 
         if (playerMoving == RIGHT) {
-            x = x + playerSpeed / fps;
+            x = x + playerRightSpeed / fps;
+            playerLeftSpeed = defaultSpeed;
+
         }
 
         rect.left = x;
