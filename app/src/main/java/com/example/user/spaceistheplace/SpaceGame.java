@@ -4,6 +4,8 @@ package com.example.user.spaceistheplace;
         import android.graphics.Point;
         import android.os.Bundle;
         import android.view.Display;
+        import android.view.Window;
+        import android.view.WindowManager;
 
 
 public class SpaceGame extends Activity {
@@ -30,7 +32,6 @@ public class SpaceGame extends Activity {
         spaceGameView = new SpaceGameView(this, size.x, size.y);
         setContentView(spaceGameView);
     }
-
 
     @Override
     protected void onResume() {

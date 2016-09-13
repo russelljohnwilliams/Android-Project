@@ -33,7 +33,6 @@ import java.util.Random;
      private int lives = 3;
      private int speed = 1000;
 
-
      private Player player;
      protected Token token;
      private Asteroid asteroid;
@@ -46,7 +45,6 @@ import java.util.Random;
      private Star[] stars;
 
      private Asteroid[] asteroidsSmall;
-     private int asteroidsSmallAmount = 3;
 
      private Canvas canvas;
      private Paint paint;
@@ -80,7 +78,7 @@ import java.util.Random;
 
     private void prepareGame(){
         stars = new Star[125];
-        asteroidsSmall = new Asteroid[asteroidsSmallAmount];
+        asteroidsSmall = new Asteroid[10];
         player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 700, 700, 700);
         leftWall = new Wall(screenY + 20, 5,  0,  0);
         rightWall = new Wall(screenY + 20, 5,  screenX, 0);
@@ -89,7 +87,6 @@ import java.util.Random;
         createToken();
         createAsteroid();
         createAsteroidBig();
-        loopTheStars();
         loopTheStars();
         loopSmallAsteroids();
     }
@@ -113,7 +110,7 @@ import java.util.Random;
     }
 
     private void loopSmallAsteroids(){
-        for (int i = 0; i < asteroidsSmallAmount; i++) {
+        for (int i = 0; i < asteroidsSmall.length; i++) {
             createSmallAsteroids(i);
         }
     }
@@ -168,22 +165,44 @@ import java.util.Random;
 
         player.update(fps);
         token.update(fps);
-
+        asteroidsSmall[0].update(fps);
         for (Star star : stars) {
             star.update(fps);
         }
 
-        for (int i = 0; i < asteroidsSmallAmount; i++) {
-            asteroidsSmall[i].update(fps);
+//        for (int i = 0; i < asteroidsSmall.length; i++) {
+//            asteroidsSmall[i].update(fps);
+//        }
+
+
+
+        if (score >= 1){
+            asteroidsSmall[1].update(fps);
+        }
+
+        if (score >= 2){
+            asteroidsSmall[2].update(fps);
+        }
+
+        if (score >= 3){
+            asteroidsSmall[3].update(fps);
+        }
+
+        if (score >= 4){
+            asteroidsSmall[4].update(fps);
         }
 
         if (score >= 5) {
             asteroid.update(fps);
-//            asteroidsSmallAmount = 7;
+            asteroidsSmall[5].update(fps);
         }
 
         if (score >= 10) {
             asteroidBig.update(fps);
+            asteroidsSmall[6].update(fps);
+            asteroidsSmall[7].update(fps);
+            asteroidsSmall[8].update(fps);
+            asteroidsSmall[9].update(fps);
         }
 
         if (score >= 10) {
@@ -196,12 +215,10 @@ import java.util.Random;
 
         if (score >= 20) {
             speed = 700;
-            lives += 1;
         }
 
         if (score >= 30) {
             speed = 650;
-            lives += 1;
         }
 
         if (score >= 35) {
@@ -210,7 +227,6 @@ import java.util.Random;
 
         if (score >= 40) {
             speed = 500;
-            lives += 1;
         }
 
         if (RectF.intersects(token.getRect(), player.getRect())) {
@@ -263,7 +279,7 @@ import java.util.Random;
             }
         }
 
-        for (int i = 0; i < asteroidsSmallAmount; i++) {
+        for (int i = 0; i < asteroidsSmall.length; i++) {
             if (RectF.intersects(asteroidsSmall[i].getRect(), floor.getRect())) {
                 createSmallAsteroids(i);
             }
@@ -321,7 +337,7 @@ import java.util.Random;
                 canvas.drawRect(stars[i].getRect(), grey);
             }
 
-            for (int i = 0; i < asteroidsSmallAmount; i++) {
+            for (int i = 0; i < asteroidsSmall.length; i++) {
                 canvas.drawRect(asteroidsSmall[i].getRect(), paintOutline);
             }
 
