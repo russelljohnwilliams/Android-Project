@@ -53,6 +53,15 @@ public class Player extends GameObjects {
         rect.right = x + length;
     }
 
+//    public float getX(){
+//        return x;
+//    }
+
+//    public float getLength(){
+//        return length;
+//    }
+
+
     // this moves the ship, it is used for the intersect, to stop the ship going through the wall
     // and also at the end of the game, the ship is removed from the playable area.
     public void moveShip(int n){

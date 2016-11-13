@@ -35,6 +35,7 @@ import java.util.Random;
 
      private Player player;
      protected Token token;
+//     protected Bullet bullet;
      private Asteroid asteroid;
      private Asteroid asteroidBig;
      private Wall leftWall;
@@ -78,13 +79,14 @@ import java.util.Random;
 
     private void prepareGame(){
         stars = new Star[125];
-        asteroidsSmall = new Asteroid[10];
+        asteroidsSmall = new Asteroid[50];
         player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 700, 700, 700);
         leftWall = new Wall(screenY + 20, 5,  0,  0);
         rightWall = new Wall(screenY + 20, 5,  screenX, 0);
         floor = new Wall(100, screenX * 3, -screenX, screenY + screenY);
 
         createToken();
+//        createBullet();
         createAsteroid();
         createAsteroidBig();
         loopTheStars();
@@ -105,8 +107,8 @@ import java.util.Random;
     private void createTheStars(int i){
         int x = randomNumber(screenX, 1);
         int y = randomNumber(screenY, screenY * -1);
-        int s = randomNumber(600, 200);
-        stars[i] = new Star(screenY / 160, screenY / 160, x, y, s );
+        int speed = randomNumber(600, 200);
+        stars[i] = new Star(screenY / 160, screenY / 160, x, y, speed );
     }
 
     private void loopSmallAsteroids(){
@@ -117,16 +119,35 @@ import java.util.Random;
 
     private void createSmallAsteroids (int i){
         int x = randomNumber(screenX, 1);
-        int y = randomNumber(0 - 20, 0 - 1000);
-        int s = randomNumber(550, 350);
-        int a = randomNumber(20, 1);
-        asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 100, a);
+        int y = randomNumber(0 - 30, 0 - 1000);
+        int speed = randomNumber(350, 250);
+        int drift = randomNumber(70, 40);
+        int direction = randomNumber(20, 1);
+        asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, speed, drift, direction);
     }
+
+//     private void loopTinyAsteroids(){
+//         (int i = 0; i < tinyAsteroids.length; i++) {
+//             createTinyAsteroids(i);
+//         }
+//     }
+//
+//     private void createTinyAsteroids(){
+//         int x = randomNumber(screenX, 1);
+//         int y = randomNumber(0 - 20, 0 - 1000);
+//         int s = randomNumber(550, 350);
+//         int a = randomNumber(20, 1);
+//         asteroidsTiny[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 100, a);
+//     }
 
     private void createToken(){
         int x= randomNumber(screenX, 100);
-        token = new Token (screenY / 20, screenY / 20, x, 0 - 55, 300, 1);
+        token = new Token (screenY / 20, screenY / 20, x, 0 - 55, 350, 1);
     }
+
+//     private void createBullet(){
+//         bullet = new Bullet (screenY / 120, screenY / 120, 0 - 55, -500);
+//     }
 
     private void createAsteroid(){
         int z = randomNumber(screenX, 100 * -2);
@@ -165,7 +186,8 @@ import java.util.Random;
 
         player.update(fps);
         token.update(fps);
-        asteroidsSmall[0].update(fps);
+//        asteroidsSmall[0].update(fps);
+
         for (Star star : stars) {
             star.update(fps);
         }
@@ -176,34 +198,35 @@ import java.util.Random;
 
 
 
-        if (score >= 1){
-            asteroidsSmall[1].update(fps);
+
+            for (int i = 0; i < score; i++) {
+            asteroidsSmall[i].update(fps);
         }
 
-        if (score >= 2){
-            asteroidsSmall[2].update(fps);
-        }
-
-        if (score >= 3){
-            asteroidsSmall[3].update(fps);
-        }
-
-        if (score >= 4){
-            asteroidsSmall[4].update(fps);
-        }
-
-        if (score >= 5) {
-            asteroid.update(fps);
-            asteroidsSmall[5].update(fps);
-        }
-
-        if (score >= 10) {
-            asteroidBig.update(fps);
-            asteroidsSmall[6].update(fps);
-            asteroidsSmall[7].update(fps);
-            asteroidsSmall[8].update(fps);
-            asteroidsSmall[9].update(fps);
-        }
+//        if (score >= 2){
+//            asteroidsSmall[2].update(fps);
+//        }
+//
+//        if (score >= 3){
+//            asteroidsSmall[3].update(fps);
+//        }
+//
+//        if (score >= 4){
+//            asteroidsSmall[4].update(fps);
+//        }
+//
+//        if (score >= 5) {
+//            asteroid.update(fps);
+//            asteroidsSmall[5].update(fps);
+//        }
+//
+//        if (score >= 10) {
+//            asteroidBig.update(fps);
+//            asteroidsSmall[6].update(fps);
+//            asteroidsSmall[7].update(fps);
+//            asteroidsSmall[8].update(fps);
+//            asteroidsSmall[9].update(fps);
+//        }
 
         if (score >= 10) {
             speed = 900;
@@ -211,10 +234,15 @@ import java.util.Random;
 
         if (score >= 15) {
             speed = 800;
+            asteroid.update(fps);
         }
 
         if (score >= 20) {
             speed = 700;
+        }
+
+        if (score >= 25) {
+            speed = 750;
         }
 
         if (score >= 30) {
@@ -257,7 +285,6 @@ import java.util.Random;
         }
         if (RectF.intersects(rightWall.getRect(), player.getRect())) {
             player.playerRightSpeed = 0;
-
         }
 
         if (RectF.intersects(floor.getRect(), token.getRect())) {
@@ -271,7 +298,6 @@ import java.util.Random;
         if (RectF.intersects(floor.getRect(), asteroidBig.getRect())) {
             createAsteroidBig();
         }
-
 
         for (int i = 0; i < stars.length; i++) {
             if (RectF.intersects(stars[i].getRect(), floor.getRect())) {
@@ -299,9 +325,6 @@ import java.util.Random;
         prepareGame();
         lives -= 1;
     }
-
-
-
 
     private void draw(){
 
@@ -348,7 +371,6 @@ import java.util.Random;
 //                paint.setTextSize(screenY / 16);
                 canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 7 * 5, paint);
                 canvas.drawText("click anywhere the start again",screenX / 2, screenY / 7 * 6, paint);
-
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
