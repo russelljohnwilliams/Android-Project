@@ -22,13 +22,14 @@ import java.util.Random;
      private volatile boolean playing;
 
      private boolean paused = true;
-
+     private boolean fired = false;
      private long fps;
      private long timeThisFrame;
 
      private int screenX;
      private int screenY;
      private int score = 0;
+     private int tokensCollected = 1;
      private int lives = 3;
      private int speed = 1000;
 
@@ -40,6 +41,7 @@ import java.util.Random;
      private Wall leftWall;
      private Wall rightWall;
      private Wall floor;
+     private Wall roof;
 
 
      private Star[] stars;
@@ -68,13 +70,13 @@ import java.util.Random;
         screenY = y;
 
          prepareGame();
-         createBullet();
 
     }
 
     private void restartGame(){
         lives = 3;
         score = 0;
+        tokensCollected = 1;
         prepareGame();
     }
 
@@ -85,6 +87,7 @@ import java.util.Random;
         leftWall = new Wall(screenY + 20, 5,  0,  0);
         rightWall = new Wall(screenY + 20, 5,  screenX, 0);
         floor = new Wall(100, screenX * 3, -screenX, screenY + screenY);
+        roof = new Wall(70, screenX + 50 , -25, -75);
 
         createToken();
         createAsteroid();
@@ -144,10 +147,18 @@ import java.util.Random;
         int x = randomNumber(screenX, 100);
         token = new Token (screenY / 20, screenY / 20, x, 0 - 55, 350, 1);
     }
+//
+//     private void createBullet() {
+//         float xPos = player.getX();
+//         bullet = new Bullet(20, 50, xPos, screenY - 50, -500);
+//     }
 
      private void createBullet() {
-         float xPos = player.getX();
-         bullet = new Bullet(100, 100, xPos, screenY - 50, -500);
+         if (fired == false) {
+             float xPos = player.getX();
+             bullet = new Bullet(20, 50, xPos, screenY - 50, -500);
+             fired = true;
+         }
      }
 
     private void createAsteroid(){
@@ -188,75 +199,33 @@ import java.util.Random;
         player.update(fps);
         token.update(fps);
         if (score >= 5) {bullet.update(fps);}
-//        asteroidsSmall[0].update(fps);
 
         for (Star star : stars) {
             star.update(fps);
         }
 
-//        for (int i = 0; i < asteroidsSmall.length; i++) {
-//            asteroidsSmall[i].update(fps);
-//        }
-
-
-
-
-            for (int i = 0; i < score; i++) {
+        for (int i = 0; i < tokensCollected; i++) {
             asteroidsSmall[i].update(fps);
         }
 
-//        if (score >= 2){
-//            asteroidsSmall[2].update(fps);
-//        }
-//
-//        if (score >= 3){
-//            asteroidsSmall[3].update(fps);
-//        }
-//
-//        if (score >= 4){
-//            asteroidsSmall[4].update(fps);
-//        }
-//
-//        if (score >= 5) {
-//            asteroid.update(fps);
-//            asteroidsSmall[5].update(fps);
-//        }
-//
-//        if (score >= 10) {
-//            asteroidBig.update(fps);
-//            asteroidsSmall[6].update(fps);
-//            asteroidsSmall[7].update(fps);
-//            asteroidsSmall[8].update(fps);
-//            asteroidsSmall[9].update(fps);
-//        }
-
-        if (score >= 10) {
-            speed = 900;
-        }
-
-        if (score >= 15) {
-            speed = 800;
+        if (tokensCollected >= 15) {
             asteroid.update(fps);
         }
 
-        if (score >= 20) {
-            speed = 700;
+        if (tokensCollected >= 25) {
+            asteroidBig.update(fps);
         }
 
-        if (score >= 25) {
-            speed = 750;
+        if (score >= 20) {
+            speed = 950;
         }
 
         if (score >= 30) {
-            speed = 650;
-        }
-
-        if (score >= 35) {
-            speed = 600;
+            speed = 900;
         }
 
         if (score >= 40) {
-            speed = 500;
+            speed = 850;
         }
 
         if (RectF.intersects(token.getRect(), player.getRect())) {
@@ -265,6 +234,7 @@ import java.util.Random;
             ourHolder.unlockCanvasAndPost(canvas);
             createToken();
             score += token.getValue();
+            tokensCollected += 1;
         }
 
         if (RectF.intersects(asteroid.getRect(), player.getRect())) {
@@ -301,6 +271,11 @@ import java.util.Random;
             createAsteroidBig();
         }
 
+        if (RectF.intersects(roof.getRect(), bullet.getRect())) {
+            fired = false;
+            
+        }
+
         for (int i = 0; i < stars.length; i++) {
             if (RectF.intersects(stars[i].getRect(), floor.getRect())) {
                 createTheStars(i);
@@ -310,6 +285,11 @@ import java.util.Random;
         for (int i = 0; i < asteroidsSmall.length; i++) {
             if (RectF.intersects(asteroidsSmall[i].getRect(), floor.getRect())) {
                 createSmallAsteroids(i);
+            }
+            else if (RectF.intersects(bullet.getRect(), asteroidsSmall[i].getRect())) {
+                score += 1;
+                createSmallAsteroids(i);
+                fired = false;
             }
         }
 
@@ -354,6 +334,7 @@ import java.util.Random;
             canvas.drawRect(leftWall.getRect(), hidden);
             canvas.drawRect(rightWall.getRect(), hidden);
             canvas.drawRect(floor.getRect(), hidden);
+            canvas.drawRect(roof.getRect(), paint);
 
             canvas.drawText("Score: " + score, screenX / 12, screenY / 12 , paint);
             canvas.drawText("Lives: " + lives, screenX / 15 * 14, screenY / 12, paint);
@@ -378,14 +359,12 @@ import java.util.Random;
             if (score >= 5){
                 canvas.drawRect(bullet.getRect(), paint);
             }
-
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
 
     public void pause() {
         playing = false;
-
         try {
             gameThread.join();
         } catch (InterruptedException e) {
@@ -403,22 +382,24 @@ import java.util.Random;
 
     public boolean onTouchEvent(MotionEvent motionEvent) {
 
-
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-
             case MotionEvent.ACTION_DOWN:
-
-                    paused = false;
+//                    paused = false;
 
                     if (lives <= 0) {
-
                         restartGame();
                     }
+                    else if (motionEvent.getY() > screenY / 2) {
+                        createBullet();
+                        fired = true;
+                        paused = false;
+                    }
                     else if (motionEvent.getX() > screenX / 2) {
-
                         player.setMovementState(player.RIGHT);
+                        paused = false;
                     } else {
                         player.setMovementState(player.LEFT);
+                        paused = false;
                     }
 
                     break;
@@ -432,3 +413,8 @@ import java.util.Random;
     }
 }
 
+
+
+// make bullet dissapear upon impact with asteroid
+// slow down asteroids a bit more
+// moke them drift more

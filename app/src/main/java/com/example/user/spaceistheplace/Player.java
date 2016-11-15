@@ -48,7 +48,7 @@ public class Player extends GameObjects {
             playerLeftSpeed = defaultSpeed;
 
         }
-
+        
         rect.left = x;
         rect.right = x + length;
     }

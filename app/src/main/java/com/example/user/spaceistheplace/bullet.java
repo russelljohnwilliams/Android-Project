@@ -100,7 +100,7 @@ public class Bullet extends GameObjects {
     }
 
     public void update(float fps) {
-
+        rect.left = x;
         y = y + bulletSpeed / fps;
         rect.top = y;
         rect.bottom = y + width;
