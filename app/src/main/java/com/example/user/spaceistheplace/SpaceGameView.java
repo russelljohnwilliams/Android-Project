@@ -28,14 +28,13 @@ import java.util.Random;
 
      private int screenX;
      private int screenY;
-
      private int score = 0;
      private int lives = 3;
      private int speed = 1000;
 
      private Player player;
      protected Token token;
-//     protected Bullet bullet;
+     protected Bullet bullet;
      private Asteroid asteroid;
      private Asteroid asteroidBig;
      private Wall leftWall;
@@ -60,7 +59,6 @@ import java.util.Random;
         this.context = context;
 
         ourHolder = getHolder();
-
         paintOutline = new Paint();
         paint = new Paint();
         hidden = new Paint();
@@ -68,7 +66,10 @@ import java.util.Random;
 
         screenX = x;
         screenY = y;
-        prepareGame();
+
+         prepareGame();
+         createBullet();
+
     }
 
     private void restartGame(){
@@ -86,7 +87,6 @@ import java.util.Random;
         floor = new Wall(100, screenX * 3, -screenX, screenY + screenY);
 
         createToken();
-//        createBullet();
         createAsteroid();
         createAsteroidBig();
         loopTheStars();
@@ -138,16 +138,17 @@ import java.util.Random;
 //         int s = randomNumber(550, 350);
 //         int a = randomNumber(20, 1);
 //         asteroidsTiny[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 100, a);
-//     }
+//
 
     private void createToken(){
-        int x= randomNumber(screenX, 100);
+        int x = randomNumber(screenX, 100);
         token = new Token (screenY / 20, screenY / 20, x, 0 - 55, 350, 1);
     }
 
-//     private void createBullet(){
-//         bullet = new Bullet (screenY / 120, screenY / 120, 0 - 55, -500);
-//     }
+     private void createBullet() {
+         float xPos = player.getX();
+         bullet = new Bullet(100, 100, xPos, screenY - 50, -500);
+     }
 
     private void createAsteroid(){
         int z = randomNumber(screenX, 100 * -2);
@@ -186,6 +187,7 @@ import java.util.Random;
 
         player.update(fps);
         token.update(fps);
+        if (score >= 5) {bullet.update(fps);}
 //        asteroidsSmall[0].update(fps);
 
         for (Star star : stars) {
@@ -372,6 +374,11 @@ import java.util.Random;
                 canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 7 * 5, paint);
                 canvas.drawText("click anywhere the start again",screenX / 2, screenY / 7 * 6, paint);
             }
+
+            if (score >= 5){
+                canvas.drawRect(bullet.getRect(), paint);
+            }
+
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }

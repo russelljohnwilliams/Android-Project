@@ -53,9 +53,9 @@ public class Player extends GameObjects {
         rect.right = x + length;
     }
 
-//    public float getX(){
-//        return x;
-//    }
+    public float getX(){
+        return x;
+    }
 
 //    public float getLength(){
 //        return length;
