@@ -57,6 +57,10 @@ public class Player extends GameObjects {
         return x;
     }
 
+    public float getLength(){
+        return length;
+    }
+
 //    public float getLength(){
 //        return length;
 //    }
