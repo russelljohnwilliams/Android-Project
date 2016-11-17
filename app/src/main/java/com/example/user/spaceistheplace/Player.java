@@ -46,7 +46,6 @@ public class Player extends GameObjects {
         if (playerMoving == RIGHT) {
             x = x + playerRightSpeed / fps;
             playerLeftSpeed = defaultSpeed;
-
         }
         
         rect.left = x;
@@ -61,15 +60,10 @@ public class Player extends GameObjects {
         return length;
     }
 
-//    public float getLength(){
-//        return length;
-//    }
-
-
     // this moves the ship, it is used for the intersect, to stop the ship going through the wall
     // and also at the end of the game, the ship is removed from the playable area.
-    public void moveShip(int n){
-        x = n;
-    }
+//    public void moveShip(int n){
+//        x = n;
+//    }
 
 }

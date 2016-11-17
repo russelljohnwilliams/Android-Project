@@ -1,6 +1,8 @@
 package com.example.user.spaceistheplace;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -86,7 +88,7 @@ import java.util.Random;
     private void prepareGame(){
         stars = new Star[125];
         asteroidsSmall = new Asteroid[50];
-        player = new Player (screenX / 20, screenY / 25, screenX / 2, screenY - 50, 700, 700, 700);
+        player = new Player (screenX / 25, screenY / 12, screenX / 2, screenY - 50, 700, 700, 700);
         leftWall = new Wall(screenY + 20, 5,  0,  0);
         rightWall = new Wall(screenY + 20, 5,  screenX, 0);
         floor = new Wall(100, screenX * 3, -screenX, screenY + screenY);
@@ -191,6 +193,7 @@ import java.util.Random;
             asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 200, 70, a);
     }
 
+
     @Override
     public void run() {
         while (playing) {
@@ -229,11 +232,11 @@ import java.util.Random;
             asteroidsSmall[i].update(fps);
         }
 
-        if (tokensCollected >= 15) {
+        if (score >= 25) {
             asteroid.update(fps);
         }
 
-        if (tokensCollected >= 25) {
+        if (score >= 50) {
             asteroidBig.update(fps);
         }
 
@@ -356,6 +359,7 @@ import java.util.Random;
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setTextSize(screenY / 20);
 
+
             canvas.drawColor(Color.BLACK);
 
             canvas.drawRect(token.getRect(), paint);
@@ -383,8 +387,11 @@ import java.util.Random;
                 }
             }
 
-            if (playerActive == true) {
-                canvas.drawRoundRect(player.getRect(), 10, 10, paint);
+            if (playerActive) {
+                Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),
+                        R.drawable.spaceship);
+                canvas.drawBitmap(myBitmap, null, player.getRect(), null);
+//                canvas.drawRoundRect(player.getRect(), 10, 10, paint);
             } else {
                 canvas.drawRoundRect(player.getRect(), 10,10, hidden);
             }
