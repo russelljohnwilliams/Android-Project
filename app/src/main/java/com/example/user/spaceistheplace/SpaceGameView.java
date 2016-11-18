@@ -13,7 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.util.Random;
 
- class SpaceGameView extends SurfaceView implements Runnable{
+class SpaceGameView extends SurfaceView implements Runnable{
 
     Context context;
 
@@ -102,6 +102,17 @@ import java.util.Random;
 
     }
 
+
+//    final Handler handler = new Handler();
+//
+//    handler.postDelayed(new Runnable() {
+//        @Override
+//        public void run() {
+//            paused = false;
+//        }
+//    }, 100);
+
+
     private int randomNumber(int a, int b){
         Random r = new Random();
         return r.nextInt(a - b) + b;
@@ -134,10 +145,6 @@ import java.util.Random;
         int direction = randomNumber(20, 1);
         asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, speed, drift, direction);
     }
-
-     private void unPauseGame (){
-         paused = false;
-     }
 
 //     private void loopTinyAsteroids(){
 //         (int i = 0; i < tinyAsteroids.length; i++) {
@@ -193,14 +200,13 @@ import java.util.Random;
             asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 200, 70, a);
     }
 
-
     @Override
     public void run() {
         while (playing) {
             long currentFrameTime = System.currentTimeMillis();
-            if(!paused){
+//            if(!paused){
                 update();
-            }
+//            }
 
             draw();
 
@@ -327,7 +333,6 @@ import java.util.Random;
 
         if (lives <= 0) {
             playerActive = false;
-//            player.moveShip(2500);
             paused = false;
             speed = 1000;
         }
@@ -402,8 +407,6 @@ import java.util.Random;
                 canvas.drawText("OVER", screenX / 3 * 2, screenY / 5 * 3, paintOutline);
                 canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 7 * 5, paint);
                 canvas.drawText("click anywhere the start again",screenX / 2, screenY / 7 * 6, paint);
-                // make a button here to start a new game
-//                canvas.drawRect(button, screenX / 3 * 2, screenY / 5 * 3, paintOutline, paint);
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -431,23 +434,23 @@ import java.util.Random;
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
 
-                    if (lives <= 0) {
-                        restartGame();
-                    }
-                    else if (motionEvent.getY() > screenY / 1.5) {
-                        createBullet();
-                        visible =true;
-                        fired = true;
-                        unPauseGame();
-                    }
-                    else if (motionEvent.getX() > screenX / 2) {
-                        player.setMovementState(player.RIGHT);
-                        unPauseGame();
-                    } else {
-                        player.setMovementState(player.LEFT);
-                        unPauseGame();
-                    }
-
+                if (paused) {
+                    paused = false;
+                }
+                if (lives <= 0) {
+                    restartGame();
+                }
+//                if (motionEvent.getY() > screenY / 1.5) {
+//                    createBullet();
+//                    visible = true;
+//                }
+//                if (motionEvent.getY() < screenY / 1.5) {
+                    if (motionEvent.getX() > screenX / 2) {
+                    player.setMovementState(player.RIGHT);
+                } else {
+                    player.setMovementState(player.LEFT);
+                }
+//            }
                     break;
                     case MotionEvent.ACTION_UP:
                         player.setMovementState(player.STOPPED);
@@ -460,4 +463,3 @@ import java.util.Random;
 
 
 
-// slow down asteroids a bit more
