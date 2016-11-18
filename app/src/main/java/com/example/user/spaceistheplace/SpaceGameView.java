@@ -7,11 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.util.Random;
+import java.util.TimerTask;
+import java.util.logging.Handler;
 
 class SpaceGameView extends SurfaceView implements Runnable{
 
@@ -100,18 +103,8 @@ class SpaceGameView extends SurfaceView implements Runnable{
         loopTheStars();
         loopSmallAsteroids();
 
+
     }
-
-
-//    final Handler handler = new Handler();
-//
-//    handler.postDelayed(new Runnable() {
-//        @Override
-//        public void run() {
-//            paused = false;
-//        }
-//    }, 100);
-
 
     private int randomNumber(int a, int b){
         Random r = new Random();
@@ -146,34 +139,11 @@ class SpaceGameView extends SurfaceView implements Runnable{
         asteroidsSmall[i] = new Asteroid(screenY / 25, screenY / 25, x, y, speed, drift, direction);
     }
 
-//     private void loopTinyAsteroids(){
-//         (int i = 0; i < tinyAsteroids.length; i++) {
-//             createTinyAsteroids(i);
-//         }
-//     }
-//
-//     private void createTinyAsteroids(){
-//         int x = randomNumber(screenX, 1);
-//         int y = randomNumber(0 - 20, 0 - 1000);
-//         int s = randomNumber(550, 350);
-//         int a = randomNumber(20, 1);
-//         asteroidsTiny[i] = new Asteroid(screenY / 25, screenY / 25, x, y, s, 100, a);
-//
 
     private void createToken(){
         int x = randomNumber(screenX, 95);
         token = new Token (screenY / 20, screenY / 20, x, 0 - 55, 350, 1);
     }
-//
-//     private void createBullet() {
-//         if (fired == false) {
-//             for (int i = 0; i < bullet.length; i++) {
-//                 float xPos = player.getX() + player.getLength() / 2;
-//                 bullet[i] = new Bullet(10, 40, xPos, screenY - 60, -1600);
-//                 fired = true;
-//             }
-//         }
-//     }
 
      private void createBullet() {
          if (fired == false) {
@@ -200,18 +170,14 @@ class SpaceGameView extends SurfaceView implements Runnable{
             asteroidBig = new Asteroid(screenX / 2, screenX / 2, z, y, 200, 70, a);
     }
 
+
     @Override
     public void run() {
         while (playing) {
             long currentFrameTime = System.currentTimeMillis();
-//            if(!paused){
-                update();
-//            }
-
+            if(!paused) update();
             draw();
-
             timeThisFrame = System.currentTimeMillis() - currentFrameTime;
-
             if (timeThisFrame >= 1) {
                 fps = speed / timeThisFrame;
             }
@@ -225,9 +191,7 @@ class SpaceGameView extends SurfaceView implements Runnable{
         token.update(fps);
 
         for (int i = 0; i < bullet.length; i++) {
-            if (score >= 5) {
-                bullet[i].update(fps);
-            }
+            if (score >= 5) bullet[i].update(fps);
         }
 
         for (Star star : stars) {
@@ -258,7 +222,7 @@ class SpaceGameView extends SurfaceView implements Runnable{
             speed = 850;
         }
 
-        if (playerActive == true) {
+        if (playerActive) {
             if (RectF.intersects(token.getRect(), player.getRect())) {
                 canvas = ourHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
@@ -407,6 +371,8 @@ class SpaceGameView extends SurfaceView implements Runnable{
                 canvas.drawText("OVER", screenX / 3 * 2, screenY / 5 * 3, paintOutline);
                 canvas.drawText(" your final Score was: " + score, screenX / 2, screenY / 7 * 5, paint);
                 canvas.drawText("click anywhere the start again",screenX / 2, screenY / 7 * 6, paint);
+                // make a button here to start a new game
+//                canvas.drawRect(button, screenX / 3 * 2, screenY / 5 * 3, paintOutline, paint);
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -440,26 +406,25 @@ class SpaceGameView extends SurfaceView implements Runnable{
                 if (lives <= 0) {
                     restartGame();
                 }
-//                if (motionEvent.getY() > screenY / 1.5) {
-//                    createBullet();
-//                    visible = true;
-//                }
-//                if (motionEvent.getY() < screenY / 1.5) {
+                if (motionEvent.getY() > screenY / 2) {
                     if (motionEvent.getX() > screenX / 2) {
-                    player.setMovementState(player.RIGHT);
-                } else {
-                    player.setMovementState(player.LEFT);
+                        player.setMovementState(player.RIGHT);
+                    }
+                    if(motionEvent.getX() < screenX / 2) {
+                        player.setMovementState(player.LEFT);
+                    }
                 }
-//            }
-                    break;
-                    case MotionEvent.ACTION_UP:
-                        player.setMovementState(player.STOPPED);
-                break;
+                if (motionEvent.getY() < screenY / 2) {
+                    createBullet();
+                    visible = true;
+                    fired = true;
+                }
 
+                break;
+            case MotionEvent.ACTION_UP:
+                player.setMovementState(player.STOPPED);
+                break;
         }
         return true;
     }
 }
-
-
-
